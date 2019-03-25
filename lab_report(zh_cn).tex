@@ -1,0 +1,742 @@
+%!Mode:: "TeX:UTF-8"
+\documentclass[a4paper,11pt,UTF8]{ctexart}
+
+\usepackage{indentfirst} %缩进
+\usepackage{xeCJK}    %使用系统字体
+\usepackage{fancyhdr} %自定义页眉页脚
+\pagestyle{empty}                   %不设置页眉页脚
+\usepackage{amsmath, amsthm, amssymb, amsfonts} %数学公式
+\usepackage[a4paper,left=3cm,right=3cm,top=3cm,bottom=3cm]{geometry}
+%\usepackage[tmargin=1in,bmargin=1in,lmargin=1.25in,rmargin=1.25in]{geometry}.
+\usepackage{booktabs} %插入表格
+\usepackage[section]{placeins} %避免浮动
+\usepackage{listings} %插入代码
+\usepackage{ctex}     %中文宏包
+\usepackage[svgnames, table]{xcolor} %彩色表格
+\usepackage{algorithm}          %伪代码
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{algorithm,algpseudocode,float}
+\usepackage{lipsum}
+\usepackage{enumitem}           %调整列举环境
+\usepackage{url}
+\usepackage{fontspec,xunicode}
+\usepackage{cite}
+\defaultfontfeatures{Mapping=tex-text} %如果没有它，会有一些 tex 特殊字符无法正常使用，比如连字符。
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\graphicspath{{imgs/}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 缩进及行间距
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\parindent}{22pt} %重新定义缩进长度
+\setlength{\baselineskip}{20pt}  %定义行间距
+%\renewcommand{\baselinestretch}{1.1} %定义行间距
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 列表设置
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setenumerate{fullwidth,itemindent=\parindent,listparindent=\parindent,itemsep=0ex,partopsep=0pt,parsep=0ex}
+\setenumerate[2]{label=\alph*),leftmargin=1.5em}  %二级item设置
+\setitemize{itemindent=38pt,leftmargin=0pt,itemsep=-0.4ex,listparindent=26pt,partopsep=0pt,parsep=0.5ex,topsep=-0.25ex}
+\setdescription{itemindent=38pt,leftmargin=0pt,itemsep=-0.4ex,listparindent=26pt,partopsep=0pt,parsep=0.5ex,topsep=-0.25ex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 图的标题行间距设置
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\bottomcaption}{%
+\setlength{\abovecaptionskip}{6pt}%
+\setlength{\belowcaptionskip}{6pt}%
+\caption}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 字体定义
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setmainfont{Times New Roman}  %默认英文字体.serif是有衬线字体sans serif无衬线字体
+\setmonofont{Consolas}
+\setCJKmainfont[ItalicFont={楷体}, BoldFont={黑体}]{宋体}%衬线字体 缺省中文字体为
+\setCJKsansfont{黑体}
+\punctstyle{hangmobanjiao}
+%-----------------------xeCJK下设置中文字体------------------------------%
+\setCJKfamilyfont{song}{SimSun}                             %宋体 song
+\newcommand{\song}{\CJKfamily{song}}
+\setCJKfamilyfont{fs}{FangSong}                      %仿宋  fs
+\newcommand{\fs}{\CJKfamily{fs}}
+\setCJKfamilyfont{ktgb}{KaiTi}                      %楷体2312 ktgb
+\newcommand{\ktgb}{\CJKfamily{ktgb}}
+\setCJKfamilyfont{yh}{Microsoft YaHei}                    %微软雅黑 yh
+\newcommand{\yh}{\CJKfamily{yh}}
+\setCJKfamilyfont{hei}{SimHei}                              %黑体  hei
+\newcommand{\hei}{\CJKfamily{hei}}
+\setCJKfamilyfont{hwxk}{STXingkai}                                %华文行楷  hwxk
+\newcommand{\hwxk}{\CJKfamily{hwxk}}
+%------------------------------设置字体大小------------------------%
+\newcommand{\shiyanbaogao}{\fontsize{36pt}{\baselineskip}\selectfont}
+\newcommand{\chuhao}{\fontsize{42pt}{\baselineskip}\selectfont}     %初号
+\newcommand{\xiaochuhao}{\fontsize{36pt}{\baselineskip}\selectfont} %小初号
+\newcommand{\yihao}{\fontsize{28pt}{\baselineskip}\selectfont}      %一号
+\newcommand{\erhao}{\fontsize{21pt}{\baselineskip}\selectfont}      %二号
+\newcommand{\xiaoerhao}{\fontsize{18pt}{\baselineskip}\selectfont}  %小二号
+\newcommand{\sanhao}{\fontsize{15.75pt}{\baselineskip}\selectfont}  %三号
+\newcommand{\sihao}{\fontsize{14pt}{\baselineskip}\selectfont}       %四号
+\newcommand{\xiaosihao}{\fontsize{12pt}{\baselineskip}\selectfont}  %小四号
+\newcommand{\wuhao}{\fontsize{10.5pt}{\baselineskip}\selectfont}    %五号
+\newcommand{\xiaowuhao}{\fontsize{9pt}{\baselineskip}\selectfont}   %小五号
+\newcommand{\liuhao}{\fontsize{7.875pt}{\baselineskip}\selectfont}  %六号
+\newcommand{\qihao}{\fontsize{5.25pt}{\baselineskip}\selectfont}    %七号
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 图题字体大小相同
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{caption}
+\captionsetup{font={footnotesize}}   % footnotesize = 9pt
+\captionsetup[lstlisting]{font={footnotesize}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 重定义枚举编号为 1),2)...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\labelenumi}{\theenumi)}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 重定义section标题
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\CTEXsetup[format={\sihao\CJKfamily{zhhei}\zihao{4}},number={\chinese{section}},name={,、~},aftername={},indent={0pt},beforeskip={6pt},afterskip={6pt},format+={\flushleft}]{section}
+\CTEXsetup[format={\Large\bfseries\CJKfamily{zhkai}\zihao{5}},name={（,）},number={\chinese{subsection}},aftername={},indent={22pt},beforeskip={14pt},afterskip={2pt}]{subsection}
+\CTEXsetup[number={\chinese{section}},name={附录, ~~ }]{appendix}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 标题名称中文化
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand\figurename{\hei 图}
+\renewcommand\tablename{\hei 表}
+\renewcommand\lstlistingname{\hei 代码}
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
+\newtheorem{define}{定义}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 代码设置
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lstset{
+ columns=fixed,
+ numbers=left,                                        % 在左侧显示行号
+ numberstyle=\tiny\color{gray},                       % 设定行号格式
+ frame=single,                                        % 单线背景边框
+ breaklines=true,                                     % 设定LaTeX对过长的代码行进行自动换行
+ keywordstyle=\color[RGB]{40,40,255},                 % 设定关键字颜色
+ numberstyle=\footnotesize\color{darkgray},
+ commentstyle=\it\color[RGB]{0,96,96},                % 设置代码注释的格式
+ stringstyle=\rmfamily\slshape\color[RGB]{128,0,0},   % 设置字符串格式
+ showstringspaces=false,                              % 不显示字符串中的空格
+ language=java,                                        % 设置语言
+ basicstyle=\linespread{1.0}\xiaowuhao\ttfamily,                      % 字体字号
+ %lineskip=10pt,
+ %baselinestretch=1,
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 伪代码分页
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\renewcommand{\ALG@name}{算法}
+\newenvironment{breakablealgorithm}
+  {% \begin{breakablealgorithm}
+   \begin{center}
+     \refstepcounter{algorithm}% New algorithm
+     \hrule height.8pt depth0pt \kern2pt% \@fs@pre for \@fs@ruled
+     \renewcommand{\caption}[2][\relax]{% Make a new \caption
+       {\raggedright\textbf{\ALG@name~\thealgorithm} ##2\par}%
+       \ifx\relax##1\relax % #1 is \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##2}%
+       \else % #1 is not \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##1}%
+       \fi
+       \kern2pt\hrule\kern2pt
+     }
+  }{% \end{breakablealgorithm}
+     \kern2pt\hrule\relax% \@fs@post for \@fs@ruled
+   \end{center}
+  }
+\makeatother
+
+
+
+\begin{document}
+\xiaosihao\song
+
+\begin{titlepage}
+\center{\yihao{\ktgb{中山大学数据科学与计算机学院\\操作系统实验课程}}}
+\vspace{1cm}
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=9cm]%{timg}
+%	\bottomcaption{\xiaowuhao{电子科技大学}}
+\end{figure}
+
+\center{\shiyanbaogao{\ktgb{实~验~报~告}}}
+\vspace{2cm}
+
+\begin{center}
+\begin{large}
+\begin{tabular}{rc}
+\xiaoerhao{\hei{教\qquad 师}}& \sanhao{\hei{凌应标}}\\
+\cline{2-2}\\
+\xiaoerhao{\hei{学\qquad 号}}& \hspace{1.7cm}\sanhao{\hei{17341035\hspace{1.7cm}}} \\
+\cline{2-2}\\
+\xiaoerhao{\hei{姓\qquad 名}}& \sanhao{\hei{冯家苇}}\\
+\cline{2-2}\\
+\xiaoerhao{\hei{实验名称}}& \sanhao{\hei{实验一（接管裸机控制权）}}\\
+\cline{2-2}\\
+
+\end{tabular}
+\end{large}
+\end{center}
+\vfill \hfill
+\end{titlepage}
+\clearpage
+
+\centerline{\\[10pt]\erhao{\fs{实~验~一}}}
+\centerline{\\[10pt]\yihao{\fs{接~管~裸~机~控~制~权}}}
+
+\leftline{\\[8pt]\xiaosihao{\hei{\hspace{1.5em} 姓名：冯家苇 \hfill 学号：17341035 \hfill  }}}
+
+\leftline{\\[8pt]\xiaosihao{\hei{\hspace{1.5em} 邮箱：fengjw3@mail2.sysu.edu.cn \hfill}}}
+
+\leftline{\\[8pt]\xiaosihao{\hei{\hspace{1.5em} 实验时间：周五（3-4节） \hfill }}}
+
+
+\setcounter{tocdepth}{2}
+\setlength{\parskip}{0pt}
+\tableofcontents
+\clearpage
+
+\section{实验目的}
+	
+	\begin{enumerate}
+		\item 理解操作系统的定义、功能与作用，了解嵌入式开发基本原理。
+		\item 掌握实验环境的构成与实验工具搭配，实现实验环境的搭建与简单应用。
+		\item 掌握裸机编程基本操作流程，着重理解内存与地址空间，显存原理，寄存器使用规则，实现接管裸机的控制权。
+	\end{enumerate}
+
+
+\section{实验要求}
+
+\subsection{搭建和应用实验环境}
+
+	虚拟机安装，生成一个基本配置的虚拟机XXXPC和多个1.44MB容量的虚拟软盘，将其中一个虚拟软盘用DOS格式化为DOS引导盘，用WinHex工具将其中一个虚拟软盘的首扇区填满你的个人信息。
+	
+
+\subsection{接管裸机控制权}
+	
+    设计IBM\_PC的一个引导扇区程序，程序功能是：用字符‘A’从屏幕左边某行位置45度角下斜射出，保持一个可观察的适当速度直线运动，碰到屏幕的边后产生反射，改变方向运动，如此类推，不断运动；在此基础上，增加你的个性扩展，如同时控制两个运动的轨迹，或炫酷动态变色，个性画面，如此等等，自由不限。还要在屏幕某个区域特别的方式显示你的学号姓名等个人信息。将这个程序的机器码放进放进第三张虚拟软盘的首扇区，并用此软盘引导你的XXXPC，直到成功。
+	
+
+\section{实验方案}
+
+
+\subsection{配置方法及相关工具说明}
+
+\subsubsection{实验支撑环境}
+	\begin{itemize} 
+		\item 硬件：个人计算机
+		\item 主机操作系统：Windows 10
+		\item 虚拟机软件：VMware Workstation 12 Player
+	\end{itemize}
+	
+	
+	本次实验的程序开发工作在Windows 10环境下进行，便于调试与优化；存储与CPU等硬件资源来自PC，由虚拟机软件的调度算法控制。
+	
+	虚拟机为操作系统的运行提供一个虚拟化平台，它与主机的空间分离，理论上不会对主机的运行造成影响。即使实验操作系统崩溃，也可以通过重启虚拟机的方式继续实验。 
+\subsubsection{实验开发工具}
+
+	\begin{itemize} 
+	\item 汇编语言工具： x86汇编
+	\item 程序编辑器： Notepad++\_v7.5.8, Sublime Text 3
+	\item x86汇编器： NASM\_v2.07
+	\item 磁盘映像文件浏览编辑工具： WinHex\_v18.4
+	
+	本次实验主要在notepad++编辑平台上使用汇编语言模式完成。汇编程序使用NASM的汇编命令生成bin文件，再用WinHex将生成文件导入软盘，完成引导盘的设计。
+\end{itemize}
+
+\subsection{方案思想与程序流程}
+
+	\begin{itemize}
+	\item 贪吃蛇型小球跳动
+	
+	受StoneM程序启发，我希望实现一个能够不显示运动轨迹并且可以不断“生长”的小球；与经典贪吃蛇的生长方式不同，此处的小球一旦撞击到墙壁就会增加一个字符。为提高程序运行的观赏性，我预留了虚拟显示器的第一行与最后一行的位置，将我的姓名、学号与小球运动的y坐标同步显示，以达到更好的撞击视觉效果。
+	
+	具体的实现过程是：小球最先运动，在小球(字符'A')的后面紧跟一个'\ '(space),可实现清空小球的路径；当小球撞击墙壁发生反弹时，控制'\ '(space)回退一步，即($x-\delta x$, $y-\delta y$)，其中$\delta x$, $\delta y$可取$+1/-1$。实际作用效果为：在下一轮运动中，小球继续前进，而' '(space)原地踏步一次，实现小球的“生长”。
+
+	\item 程序流程图
+	
+	由于引导扇区大小（512k）的限制与当前所学知识的局限性，实验中为了实现循环控制多个小球的运动，我为小球的坐标（x,y）与运动方向（$\delta x$, $\delta y$）设定了四个dw类型的数组，利于提升代码的复用性与编程效率。
+	
+	引导程序在start段完成段寄存器的赋值后，进入sleep段，延时计数器开始计数，目的是放缓小球运动的速度。延时结束，小球开始运动，loop1是用来循环完成小球与紧随其后的空格的前进，反弹，生长与显示的，循环次数为2，首次为小球，第二次为空格。完成小球的显示后，开始移动个人信息，由于个人信息是根据时间周期性变色的，所以当达到表示颜色的最大二进制表示数时需要清零，相当于做一次模运算。此时一个时间周期的任务完成了，返回sleep段进入下一个时间周期。
+	
+	具体地，在loop1段共有两次循环：第一次循环控制小球。按照前一次的运动方向前进，然后进行是否越界判断。如果未发生越界则直接显示小球的当前位置；如果发生越界则修正当前位置并更新运动方向，随后对小球后面的'\ '(space)做一次回退，然后再显示小球当前位置，返回loop1。
+	第二次循环控制'\ '(space)。具体过程与之前相似，只是会应用到一些边界条件，防止空格反弹时会出现异常情况（图\ref{fig1}）。
+	
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=10cm]{flowchart}
+		\bottomcaption{\xiaowuhao{程序流程图：左图是整体程序的框架，右图是框架中loop1段的具体执行过程}}
+		\label{fig1}
+	\end{figure}
+	
+\end{itemize}
+	
+\subsection{数据结构与算法}
+
+	\begin{itemize}
+		\item 数据结构： 数组
+		
+			由于引导扇区大小（512k）的限制与当前所学知识的局限性，实验中为控制多个小球的运动，我为小球的坐标（x,y），运动方向（$\delta x$, $\delta y$）以及小球的字符表示设定了五个dw类型的数组，提升了代码的复用性与编程效率。
+			
+			
+			\clearpage
+			\lstset{language=={[x86masm]Assembler}}
+			\begin{lstlisting}[caption={SStone\_beta.asm数组定义},basicstyle=\footnotesize,tabsize=4,captionpos=b]
+	x dw 8,7,0
+	y dw 1,0,0
+	delta_x dw 1,1,1
+	delta_y dw 1,1,1
+	char dw 'A',' ',' '
+			\end{lstlisting}
+			
+		\item 算法： 模拟法
+		
+		由于小球运动的简单性，可以直接通过模拟小球坐标的变化解决问题。
+		
+		\begin{algorithm}
+			\caption{小球生长算法}
+			\begin{algorithmic}[1]  %每行显示行号
+				\Require 小球与空格坐标$(x_i(t), y_i(t))$，小球运动方向$(\delta x_i(t), \delta y_i(t))$
+				\Ensure 下一时刻小球与空格坐标$(x_i(t+1), y_i(t+1))$，小球运动方向$(\delta x_i(t+1), \delta y_i(t+1)$
+				\Function {loop1} {$x_i, y_i, \delta x_i, \delta y_i$}
+				\For{$i=0$; $i<2$; $i++$ }  
+				\State  $x_i \gets x_i + \delta x_i$
+				\State  $y_i \gets y_i + \delta y_i$		
+				\If{$x_i > 24$} //以在下边框反弹为例，其他三个方向与之类似
+				\State $\delta x_i \gets -1$
+				\State $x_i \gets 22$
+				\State $x_{i+1} \gets x_{i+1} - \delta x_{i+1}$ //此处会涉及到访问第三个数组元素，而这不是我
+				\State $y_{i+1} \gets y_{i+1} - \delta y_{i+1}$ //们需要的，所以定义数组时多申请一个冗余空间
+				\EndIf 
+				\EndFor  
+
+				\EndFunction
+			\end{algorithmic}
+		\end{algorithm}
+		
+	\end{itemize}
+
+\subsection{程序关键模块说明}
+	\begin{itemize}
+		\item sleep
+		
+		sleep段主要完成延时与循环变量的清零。
+		\clearpage
+			\lstset{language=={[x86nasm]Assembler}}
+			\begin{lstlisting}[caption={SStone\_beta.asm sleep段},tabsize=4,basicstyle=\footnotesize,captionpos=b]
+sleep:
+	dec word[count]			
+	jnz sleep				
+	mov word[count],delay
+	dec word[dcount]			
+	jnz sleep
+	mov word[count],delay
+	mov word[dcount],ddelay	
+	mov word[i], 0
+			\end{lstlisting}
+
+	
+		\item loop1
+		
+		在前面已说明，此处仅贴代码。
+		\lstset{language=={[x86nasm]Assembler}}
+		\begin{lstlisting}[caption={SStone\_beta.asm loop1段}, basicstyle=\footnotesize,tabsize=4,captionpos=b]
+loop1:
+	mov ax,4		
+	cmp ax, word[i]
+	jz sleep
+	
+	mov bx, delta_y         
+	add bx, word[i]			;get delta_yi
+	mov ax, word[bx]		
+	
+	mov bx, y			
+	add bx, word[i]			;add delta to yi
+	add word[bx], ax		
+	
+	mov bx, delta_x			
+	add bx, word[i]			;get delta_xi
+	mov ax, word[bx]		
+	
+	mov bx, x				
+	add bx, word[i]			;add delta to xi
+	add word[bx], ax		
+	
+	mov ax,24               
+	cmp word[bx],ax			
+	jz x1_0				;jump if xi overflow
+	mov ax,0				
+	cmp word[bx],ax			
+	jz x0_1				;jump if xi underflow
+	
+	mov bx, y				
+	add bx, word[i]			;get yi
+	
+	mov ax,70				
+	cmp word[bx],ax			
+	jz y1_0				;jump if yi overflow
+	mov ax,0				
+	cmp word[bx],ax			
+	jz y0_1				;jump if yi underflow
+	
+	call show
+	
+	inc word[i]
+	inc word[i]
+	mov ax,4		
+	cmp ax, word[i]
+	jnz loop1
+	
+	call display
+	jmp sleep
+		\end{lstlisting}
+	
+	\item x1\_0
+	
+	完成字符在下边框的反弹。首先改变运动方向，然后修正当前一出位置的字符。
+	
+	\lstset{language=={[x86nasm]Assembler}}
+	\begin{lstlisting}[caption={SStone\_beta.asm x1\_0段},tabsize=4,basicstyle=\footnotesize,captionpos=b]
+x1_0:
+	mov bx, delta_x
+	add bx, word[i]
+	mov word[bx],-1
+	
+	mov bx, x
+	add bx, word[i]
+	mov word[bx],22	
+	jmp Snake
+	
+	\end{lstlisting}
+	
+	
+	\item Snake
+	
+	这一段用于字符增长并完成显示。
+	\lstset{language=={[x86nasm]Assembler}}
+	\begin{lstlisting}[caption={SStone\_beta.asm Snake段},tabsize=4,basicstyle=\footnotesize,captionpos=b]
+Snake:
+	mov bx, delta_x
+	add bx, word[i]
+	mov ax, 2
+	add bx, ax                ;next delta_x
+	mov dx, word[bx]          ;store it
+	
+	mov bx, x
+	add bx, word[i]
+	mov ax, 2
+	add bx, ax 				  ;next x
+	sub word[bx], dx 		  ;keep x
+	
+	mov bx, delta_y
+	add bx, word[i]
+	mov ax, 2
+	add bx, ax 				  ;next delta_y
+	mov dx, word[bx] 		  ;store it
+	
+	mov bx, y
+	add bx, word[i]
+	mov ax, 2
+	add bx, ax 				  ;next y
+	sub word[bx], dx 		  ;keep y
+	
+	call show
+	
+	inc word[i]
+	inc word[i]
+	jmp loop1
+	\end{lstlisting}
+	
+	\item display
+	
+	display用于显示在上下边框移动的个人信息。它随小球的y坐标同步左右移动，并完成颜色改变。
+
+	\lstset{language=={[x86nasm]Assembler}}
+		\begin{lstlisting}[caption={SStone\_beta.asm display段},tabsize=4,basicstyle=\footnotesize,captionpos=b]
+display:
+	mov ah,13h
+	mov al,0
+	mov bl,byte[cc]
+	mov bh,0
+	mov dh,0
+	mov dl,byte[y]
+	mov bp,myname
+	mov cx,9
+	int 10h
+	mov dh,24
+	int 10h
+	
+	inc byte[cc]
+	mov cl, 15
+	cmp byte[cc], cl
+	jz colorchange
+	
+	jmp sleep
+ret
+		\end{lstlisting}
+	
+	\end{itemize}
+
+\subsection{代码文档组成说明}
+
+	\begin{table}[!h!tbp]
+		\caption{文档说明}\label{tab2}
+		\centering
+		\begin{tabular*}{0.85\textwidth}{@{\extracolsep{\fill}}lcc}
+			\toprule
+			文件名 &类型 &备注 \\
+			\midrule
+			SStone\_1 &asm     &完成小球的跳动与生长  \\
+		    SStone\_2 &asm     &增加上边界显示姓名学号 \\
+			SStone\_beta &asm  &增加下边界显示姓名学号，周期变色\\
+			fillinfo &asm &用于将个人信息填充至My\_Ohs1 \\
+			My\_Ohs &flp &DOS系统引导盘 \\
+			My\_Ohs1 &flp &充满个人信息盘 \\
+			My\_Ohs2 &flp &装入SStone程序的引导盘\\
+			\bottomrule
+		\end{tabular*}
+	\end{table}
+
+\section{实验过程与结果}
+
+\subsection{工具安装及使用}
+
+这一部分主要解决要求1。
+\subsubsection{工具安装}
+
+	\begin{itemize}
+		\item VMware Workstation 12 Player. VMware的安装过程没有什么坑。
+		
+		\item NASM
+		
+		参照\cite{Orange's}提供的网站，安装过程也较为简单；将文件路径添加到系统环境变量目录（图\ref{fig2}）中，便于每次使用。
+	
+		\item WinHex\_v18.4
+		
+		网上的最新版winhex软件多是需要付费的——新建文件不能大于200k。所以我使用了一个较早的版本。	
+	\end{itemize}
+
+\subsubsection{工具使用}
+
+	\begin{enumerate}
+		\item 生成JiaweiPC的基本配置（图\ref{fig3}），使用VMware的软盘创建方法生成三个软盘。
+		
+		\begin{figure}[htbp]
+			\centering
+			\subfigure[配置环境变量]{
+				\includegraphics[width=7cm]{envpath}
+				\label{fig2}
+			}
+			\quad
+			\subfigure[虚拟机配置]{
+				\includegraphics[width=7cm]{VMsetting}					\label{fig3}
+			}
+			\caption{配置环境变量与虚拟机配置}
+		\end{figure}
+	
+		\item 使用MS-DOS的IMG文件通过VMware安装
+		
+		新建一个软盘，使用DOS71\_1.img映像进行安装。安装完成后在DOS下创建一个软盘并连接，使用format a: /s将其格式化为系统盘（图\ref{fig4}）。然后再新建一个虚拟机MS-DOS（2），将刚刚格式化后的软盘作为其启动盘。启动后使用dir命令查看启动盘空间分配，说明软盘格式化成功（图\ref{fig5}）。
+		
+		
+		\begin{figure}[htbp]
+			\centering	
+			\subfigure[由MS-DOS格式化生成的软盘1.flp]{
+				\includegraphics[width=7cm]{ms1}
+				\label{fig4}
+			}
+			\quad
+			\subfigure[在新虚拟机MS-DOS(2)中用1.flp做启动盘]{
+				\includegraphics[width=7cm]{ms2}
+				\label{fig5}
+			}
+			\caption{生成DOS引导盘}
+		\end{figure}
+	
+		\item 使用winhex填满一个软盘的首扇区。
+		
+		使用time命令将个人信息填满软盘My\_Ohs1.flp。字符串"Fengjiawei 1035."一共$16 Bytes$，复制$32$次，总计$16*32 = 512 B$。
+		\lstset{language=={[x86nasm]Assembler}}
+		\begin{lstlisting}[caption={fillinfo.asm},tabsize=4,basicstyle=\footnotesize,captionpos=b]
+	times 32 db "Fengjiawei 1035."
+		\end{lstlisting}
+	将生成的bin文件写入软盘，字节位数可以完整匹配（图\ref{fig6}）。
+	\begin{figure}[htbp]
+	\centering	
+	\includegraphics[width=8cm]{fill1}
+	\caption{填充软盘执行结果}
+	\label{fig6}
+	\end{figure}
+		
+		
+		
+	\end{enumerate}
+\subsection{实验操作说明与程序运行结果}
+	这一部分主要用于解决要求2。首先使用NASM的汇编命令：nasm -f bin SStone\_beta.asm -o SStone\_beta.bin（图\ref{fig7}）
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=12cm]{operation_1}
+		\bottomcaption{\xiaowuhao{汇编生成bin文件}}
+		\label{fig7}
+	\end{figure}
+
+	用WinHex打开SStone\_beta.bin和之前创建的第三张空软盘My\_Ohs2.flp。使用Ctrl-b将SStone\_beta.bin文件的全部内容写入My\_Ohs2.flp中（图\ref{fig8}）。
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=8cm]{winhex}
+		\bottomcaption{\xiaowuhao{winhex制作启动盘}}
+		\label{fig8}
+	\end{figure}
+	
+	打开虚拟机JiaweiPC，连接之前生成的My\_Ohs2.flp软盘映像，开启虚拟机，运行结果（图\ref{fig9}）。
+
+	\begin{figure}[htbp]
+		\centering
+	
+		\subfigure[]{
+			\includegraphics[width=5.5cm]{bangs0}
+			
+		}
+		\quad
+		\subfigure[]{
+			\includegraphics[width=5.5cm]{bangs1}
+		}
+		\quad
+		\subfigure[]{
+			\includegraphics[width=5.5cm]{bangs2}
+		}
+		\quad
+		\subfigure[]{
+			\includegraphics[width=5.5cm]{bangs3}
+		}
+		\caption{JiaweiPC运行结果}
+		\label{fig9}
+	\end{figure}
+
+
+
+\subsection{疑难问题解决}
+	
+	\begin{itemize}
+		\item 程序起始的org与各种段寄存器的赋值问题
+		
+		当一个软盘被设置为引导盘后，BIOS首先会去加载软盘的首扇区到内存地址的$7c00h$处\cite{x86}，所以要给程序加一个$7c00h$的基址。通过bochs的调试查看当前寄存器的取值，可以发现cs、ds等段寄存器都被初始化为0（图\ref{fig10}）。原因是代码段与数据段都放在了一个程序中，只要计算出相对于首行代码的偏移量即可得出实际物理地址的偏移量。
+		
+		\begin{figure}[htbp]
+			\centering
+			\includegraphics[width=10cm]{csds}
+			\bottomcaption{\xiaowuhao{段寄存器初始化}}
+			\label{fig10}
+		\end{figure}
+		
+		\item 编写SStone\_.asm时代码量超过了512字节
+		
+		使用循环优化程序结构；将可复用部分整理为一个过程，使用call命令调用。
+		
+		\item 程序运行过程中的bug
+		
+		如小球无法显示，小球反弹时不连贯，小球一次反弹生长了两个字节等。由于程序运行有较好的时间顺序，故直接通过观察运行结果即可大致锁定程序中出错的位置。
+			
+	\end{itemize}
+
+
+\section{实验总结}
+
+这是本学期第一次操作系统实验。本次实验展示了一个最基本操作系统的设计与实现过程，即如何编写一个引导程序控制一台裸机。
+
+首先，配置相关环境与软件下载。这是学习一门新课程或者新语言最开始的部分。在实际操作中，通过了解每个软件的作用与每条命令的含义，我可以渐渐熟悉这套操作环境；而由于各个软件的独立性较好，这次基本配置过程比较轻松。
+
+其次是x86编程语言的学习。我的计算机原理老师主讲的是MIPS指令系统，我的感觉是x86对寄存器的要求与限制更为严格，因为这次实验是直接贴近裸机编程，底层的初始化命令更为复杂。
+
+在实验过程中，我的主要精力花在调试代码上。为了分析小球反弹过程的变化，我录制了多次视频暂停观看，画了很多小球运动图像，不断修改bug最后成功跑通代码。
+
+后期的程序优化也花了不少时间，主要是因为空间不足，想做出的效果放不下，有时候会出现一些奇怪的错误，仔细检查发现原来已经超过了512字节。
+
+在程序设计过程中还有一个未解决问题：若小球恰好撞击到屏幕的一角，我的反弹机制只能做到一面反弹，之后小球会从另一面溜过去。这需要再增加一次判断才能有效解决，是我的程序需要改进的地方。
+
+总之，通过这次实验，我学会了如何获取裸机的控制权，在裸机上直接跑我自己的代码，让我对操作系统有了更为直观与具体的认识。
+
+
+\section{参考文献}
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\clearpage
+
+\begin{appendix}
+
+\section{程序运行截图}
+
+	\begin{figure}[!htbp]
+	\centering
+	
+	\subfigure[]{
+		\includegraphics[width=6cm]{ss1_1}
+		
+	}
+	\quad
+	\subfigure[]{
+		\includegraphics[width=6cm]{ss1_2}
+	}
+	\quad
+	\subfigure[]{
+		\includegraphics[width=6cm]{ss1_3}
+	}
+	\quad
+	\subfigure[]{
+		\includegraphics[width=6cm]{ss1_4}
+	}
+	\caption{SStone\_1.asm运行结果}
+	\end{figure}
+
+\begin{figure}[!htbp]
+	\centering
+	
+	\subfigure[]{
+		\includegraphics[width=6cm]{ss2_1}
+		
+	}
+	\quad
+	\subfigure[]{
+		\includegraphics[width=6cm]{ss2_2}
+	}
+	\quad
+	\subfigure[]{
+		\includegraphics[width=6cm]{ss2_3}
+	}
+	\quad
+	\subfigure[]{
+		\includegraphics[width=6cm]{ss2_4}
+	}
+	\caption{SStone\_2.asm运行结果}
+\end{figure}
+
+\end{appendix}
+
+
+\end{document}

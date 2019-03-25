@@ -1,0 +1,7 @@
+PWD /media/jijorbq/Storage/allEXPER/17os/傅畅(173401038)实验二
+INPUT /etc/texmf/web2c/texmf.cnf
+INPUT /usr/share/texmf/web2c/texmf.cnf
+INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
+INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
+INPUT /media/jijorbq/Storage/allEXPER/17os/傅畅(173401038)实验二/17341038.tex
+OUTPUT /media/jijorbq/Storage/allEXPER/17os/傅畅(173401038)实验二/17341038.log

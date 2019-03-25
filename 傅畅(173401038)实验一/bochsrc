@@ -1,0 +1,16 @@
+megs:128
+
+romimage:file=/usr/local/share/bochs/gdb/share/bochs/BIOS-bochs-latest
+vgaromimage:file=/usr/local/share/bochs/gdb/share/bochs/VGABIOS-lgpl-latest
+
+floppya:1_44=vfdd144,status=inserted
+boot:floppy
+
+log:bochsout.txt
+
+mouse:enabled=0
+
+display_library:x, options="gui_debug"
+
+#gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0
+

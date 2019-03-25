@@ -1,0 +1,7 @@
+PWD /media/jijorbq/Storage/allEXPER/17os/3.1
+INPUT /etc/texmf/web2c/texmf.cnf
+INPUT /usr/share/texmf/web2c/texmf.cnf
+INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
+INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
+INPUT /media/jijorbq/Storage/allEXPER/17os/3.1/repo0.tex
+OUTPUT /media/jijorbq/Storage/allEXPER/17os/3.1/repo0.log

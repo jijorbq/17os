@@ -1,0 +1,35 @@
+
+jmp near start
+delx db 0x01,0x02,0x03,0x04
+dely db 0x01,0x02,0x03,0x02
+pos db 0x00,0x01
+dir db 0x03
+start:
+	mov ax, 0x7c0
+	mov ds, ax
+	mov ax, 0xb800
+	mov es ,ax
+
+	mov ax, 0x0
+	mov bx, 0x0
+	mov al, [pos+0x00]
+	mov bl, [pos+0x01]
+	mov cx, 0x19
+	mul cx
+	add ax,bx
+	mov cx, 0x2
+	mul ax
+
+	mov bx, ax
+
+\
+	mov byte [es:bx],'*'
+	mov byte [es:bx+0x01],0x07
+; debug
+	add bx,48
+	mov byte [es:0x20],bl
+	sub bx, 48
+	mov byte [es:0x21],0x04
+;endebug
+
+jmp $
