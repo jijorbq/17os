@@ -1,23 +1,14 @@
-
-extern void ClearScreen();  // 
-extern void putchar(char c, int r, int c);  // used for 
-extern char getchar();
-extern void puts(char *s, int len, int r, int c); // print a string at the (r,c), used for terminal 
-extern char *readItem(int k);
-extern void Scrolldown();
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 char s[N], t[N], parm[10][20]; // common used order , parameters
 
-int strnlen(char *s,int n){
-	int len=0;
-	while ( s[len] && len<n)++len;
-	return len;
-}
 void shell(){
 	while ( true){
-		if( r==79) Scrolldown();
+		while( r>=79) Scrolldown();
 		++r;
-		p= "fuchang@1038 $\0";
+		char p[]= "fuchang@1038 $\0";
 		int len =strnlen(p, MAXLEN);
 		puts(p, len, r,c);
 		Setcursor(r,c+=len);  // ignore the case that r >= 80;
@@ -31,13 +22,34 @@ void shell(){
 				putchar(ch, r,c++);s[len++] = ch;
 			}
 		}
-		
+		while ( r>=79 ) Scrolldown(),--r;
+		++r;c=0;
 		//parser the order...
-		
+		if ( (pos=match(s, "./",2))!=-1){
+
+		}else
+		if ( (pos=match(s, "ls",2))!=-1){
+
+		}else puts("command not found!",);
 	}
 
 }
-void dir();
+void dir(bool showall){
+	volatile char *p;
+	for (volatile int i=0; i<32; ++i){
+		p=readItem(i);
+		if (p[0]==0) break;
+		if ( showall){
+			int len = p[7]=='\0'?strnlen(p,8):8;
+			if ( i) putchar(' ', r,c);
+			puts(s, len, r, c); ++c;
+		}else{
+			
+			Enterline(r, c);
+		}
+	}
+	Enterline(r,c);
+}
 
 
 // and rest of 10000
