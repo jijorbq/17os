@@ -7,4 +7,4 @@
 all:
 	gcc -m32 -Og -c cfile.c -o c.o -fno-pic
 	nasm -f elf -g -F stabs  afile.asm -o a.o
-	ld -m elf_i386 -N a.o c.o -Ttext 0x7c00 --oformat binary -o fd0
+	ld -m elf_i386 -N c.o a.o -Ttext 0x7c00 --oformat binary -o fd0
