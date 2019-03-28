@@ -12,3 +12,6 @@ int strncmp(char *s, char *t, int n){ // string  , template
 void memcpy(char *dest, char *src, int n){
 	for (int i=0; i<n; ++i) dest[i]= src[i];
 }
+void memclr(char *s, int len){
+	for (int i=0; i<len; ++i) s[i] = 0;
+}
