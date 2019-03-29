@@ -29,13 +29,13 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0x7f1ef192d010. after alignment, vector=0x7f1ef192e000
+00000000000i[MEM0 ] allocated memory at 0x7fcccb024010. after alignment, vector=0x7fcccb025000
 00000000000i[MEM0 ] 128.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=128
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/gdb/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/41472 ('/usr/local/share/bochs/gdb/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Thu Mar 28 23:15:52 2019 (time0=1553786152)
+00000000000i[CMOS ] Setting initial clock to: Fri Mar 29 13:18:20 2019 (time0=1553836700)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: 'fd0' ro=0, h=2,t=80,spt=18
@@ -98,24 +98,43 @@
 00000000000i[     ] reset of 'serial' plugin device by virtual method
 00000000000i[     ] reset of 'parallel' plugin device by virtual method
 00000000000i[XGUI ] [x] Mouse off
-00000000000i[     ] dbg: Quit
-00000000000i[CPU0 ] CPU is in real mode (active)
-00000000000i[CPU0 ] CS.d_b = 16 bit
-00000000000i[CPU0 ] SS.d_b = 16 bit
-00000000000i[CPU0 ] | EAX=00000000  EBX=00000000  ECX=00000000  EDX=00000f00
-00000000000i[CPU0 ] | ESP=00000000  EBP=00000000  ESI=00000000  EDI=00000000
-00000000000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
-00000000000i[CPU0 ] | SEG selector     base    limit G D
-00000000000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00000000000i[CPU0 ] |  CS:f000( 1e00| 0|  0) ffff0000 0000ffff 0 0
-00000000000i[CPU0 ] |  DS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00000000000i[CPU0 ] |  SS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00000000000i[CPU0 ] |  ES:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00000000000i[CPU0 ] |  FS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00000000000i[CPU0 ] |  GS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00000000000i[CPU0 ] | EIP=0000fff0 (0000fff0)
-00000000000i[CPU0 ] | CR0=0x60000010 CR2=0x00000000
-00000000000i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-00000000000i[CMOS ] Last time is 1553786152 (Thu Mar 28 23:15:52 2019)
-00000000000i[XGUI ] Exit
-00000000000i[CTRL ] quit_sim called with exit code 0
+00000004662i[BIOS ] $Revision: 13073 $ $Date: 2017-02-16 22:43:52 +0100 (Do, 16. Feb 2017) $
+00000318065i[KBD  ] reset-disable command received
+00000320796i[BIOS ] Starting rombios32
+00000321234i[BIOS ] Shutdown flag 0
+00000321817i[BIOS ] ram_size=0x08000000
+00000322260i[BIOS ] ram_end=128MB
+00000362774i[BIOS ] Found 1 cpu(s)
+00000376358i[BIOS ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
+00000394815i[BIOS ] bios_table_cur_addr: 0x000f9cd8
+00000522432i[VBIOS] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
+00000522503i[VGA  ] VBE known Display Interface b0c0
+00000522535i[VGA  ] VBE known Display Interface b0c5
+00000525460i[VBIOS] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
+00000600000i[XGUI ] charmap update. Font Height is 16
+00013161878i[BIOS ] Booting from 0000:7c00
+00013200000i[XGUI ] charmap update. Font Height is 16
+00013400000i[XGUI ] charmap update. Font Height is 16
+00013626330i[FDD  ] partial read() on floppy image returns 188/512
+00013671285i[FDD  ] read() on floppy image returns 0
+00848031055i[     ] dbg: Quit
+00848031055i[CPU0 ] CPU is in real mode (active)
+00848031055i[CPU0 ] CS.d_b = 16 bit
+00848031055i[CPU0 ] SS.d_b = 16 bit
+00848031055i[CPU0 ] | EAX=0000003c  EBX=0000ffb7  ECX=000003e8  EDX=0000ffb7
+00848031055i[CPU0 ] | ESP=0000ff88  EBP=00000000  ESI=00000007  EDI=0000ffac
+00848031055i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf ZF af PF cf
+00848031055i[CPU0 ] | SEG selector     base    limit G D
+00848031055i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00848031055i[CPU0 ] |  CS:f000( 0004| 0|  0) 000f0000 0000ffff 0 0
+00848031055i[CPU0 ] |  DS:0040( 0005| 0|  0) 00000400 0000ffff 0 0
+00848031055i[CPU0 ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00848031055i[CPU0 ] |  ES:b800( 0005| 0|  0) 000b8000 0000ffff 0 0
+00848031055i[CPU0 ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00848031055i[CPU0 ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00848031055i[CPU0 ] | EIP=0000e869 (0000e869)
+00848031055i[CPU0 ] | CR0=0x60000010 CR2=0x00000000
+00848031055i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
+00848031055i[CMOS ] Last time is 1553836912 (Fri Mar 29 13:21:52 2019)
+00848031055i[XGUI ] Exit
+00848031055i[CTRL ] quit_sim called with exit code 0

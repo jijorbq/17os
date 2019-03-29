@@ -83,7 +83,7 @@ void exec_single(char *cmd, int len){
 	Enterline(&r,&c);
 }
 void exec_batch(char *batchs, int len){
-	for (volatile int i=0,j; i<len; i=j){
+	for (volatile int i=0,j; batchs[i] && i<len; i=j){
 		for (; batchs[i]==' ' && i<len; ++i);
 		for (j=i; (batchs[j]!='\r'&&batchs[j]!='\n' && j<len; ++j);
 		exec_single(batchs+i, j-i);
