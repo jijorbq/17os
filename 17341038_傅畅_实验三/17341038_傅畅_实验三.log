@@ -1,10 +1,10 @@
-This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017) (preloaded format=xelatex 2018.5.10)  30 MAR 2019 11:34
+This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017) (preloaded format=xelatex 2018.5.10)  30 MAR 2019 20:21
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/media/jijorbq/Storage/allEXPER/17os/17341038/lab_report(zh_cn)
-(/media/jijorbq/Storage/allEXPER/17os/17341038/lab_report(zh_cn).tex
+**/media/jijorbq/Storage/allEXPER/17os/17341038/17341038_傅畅_实验三
+(/media/jijorbq/Storage/allEXPER/17os/17341038/17341038_傅畅_实验三.tex
 LaTeX2e <2017-04-15>
 Babel <3.10> and hyphenation patterns for 84 language(s) loaded.
 (/usr/local/texlive/2017/texmf-dist/tex/latex/ctex/ctexart.cls (/usr/local/texlive/2017/texmf-dist/tex/latex/l3kernel/expl3.sty
@@ -1491,8 +1491,8 @@ File: lstlang1.sty 2015/06/04 1.6 listings language file
 Package: xeCJK-listings 2017/05/15 v3.4.8 xeCJK patch file for listings
 \l__xeCJK_listings_max_char_int=\count193
 \l__xeCJK_listings_flag_int=\count194
-) (./lab_report(zh_cn).aux)
-\openout1 = `lab_report(zh_cn).aux'.
+) (./17341038_傅畅_实验三.aux)
+\openout1 = `17341038_傅畅_实验三.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 168.
 LaTeX Font Info:    ... okay on input line 168.
@@ -1774,19 +1774,26 @@ LaTeX Font Warning: Font shape `TU/FandolKai-Regular(0)/bx/n' undefined
 . <->"[FandolFang-Regular.otf]/OT:mapping=tex-text;"
 . - 'small caps'  (m/sc) with NFSS spec.: 
 .................................................
-[2] [3] [4] [5]
-Underfull \hbox (badness 10000) in paragraph at lines 340--343
+LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/sl' in size <9> not available
+(Font)              Font shape `TU/TimesNewRoman(0)/m/it' tried instead on input line 237.
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 259--261
 
  []
 
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 300--302
 
-Overfull \hbox (32.0856pt too wide) in paragraph at lines 350--353
+ []
+
+[4] [5]
+Overfull \hbox (32.0856pt too wide) in paragraph at lines 354--357
 []\TU/SimSun(0)/m/n/12 调 用 \TU/TimesNewRoman(0)/m/n/12 nasm \TU/SimSun(0)/m/n/12 中 的 用 户 程 序，|  需 要 加 载 其 到 对 应 的 内 存 并 跳 转 执 行，|  这 里 的 \TU/TimesNewRoman(0)/m/n/12 run_user_prog
  []
 
 [6] [7] [8] [9]
 File: imgs/Screenshot_from_2019-03-29_21-09-42.png Graphic file (type QTm)
- <use  "imgs/Screenshot_from_2019-03-29_21-09-42.png" >
+ <use  "imgs/Screenshot_from_2019-03-29_21-09-42.png" > [10]
 File: imgs/Screenshot_from_2019-03-29_21-10-06.png Graphic file (type QTm)
  <use  "imgs/Screenshot_from_2019-03-29_21-10-06.png" >
 File: imgs/Screenshot_from_2019-03-29_21-10-28.png Graphic file (type QTm)
@@ -1806,57 +1813,23 @@ File: imgs/Screenshot_from_2019-03-29_21-11-20.png Graphic file (type QTm)
 File: imgs/Screenshot_from_2019-03-29_21-11-39.png Graphic file (type QTm)
  <use  "imgs/Screenshot_from_2019-03-29_21-11-39.png" >
 File: imgs/Screenshot_from_2019-03-29_21-11-51.png Graphic file (type QTm)
- <use  "imgs/Screenshot_from_2019-03-29_21-11-51.png" > [10] [11] [12] [13] [14] [15] [16]
-File: imgs/logo.png Graphic file (type QTm)
- <use  "imgs/logo.png" >
+ <use  "imgs/Screenshot_from_2019-03-29_21-11-51.png" > [11] [12] [13] [14] [15]
+Underfull \hbox (badness 10000) in paragraph at lines 590--594
 
-LaTeX Font Warning: Font shape `TU/宋体(0)/m/sc' undefined
-(Font)              using `TU/宋体(0)/m/n' instead on input line 647.
+ []
 
-[17]
-\g__fontspec_family_STXingkai_int=\count268
-.................................................
-. fontspec info: "no-font-shape"
-. 
-. Could not resolve font "STXingkai/BI" (it probably doesn't exist).
-.................................................
-.................................................
-. fontspec info: "no-font-shape"
-. 
-. Could not resolve font "STXingkai/B" (it probably doesn't exist).
-.................................................
-.................................................
-. fontspec info: "no-font-shape"
-. 
-. Could not resolve font "STXingkai/I" (it probably doesn't exist).
-.................................................
-.................................................
-. fontspec info: "defining-font"
-. 
-. Font family 'STXingkai(0)' created for font 'STXingkai' with options
-. [Mapping=tex-text,Script={CJK}].
-.  
-.  This font family consists of the following NFSS series/shapes:
-.  
-. - 'normal' (m/n) with NFSS spec.:
-. <->"STXingkai/OT:script=hani;language=DFLT;mapping=tex-text;"
-. - 'small caps'  (m/sc) with NFSS spec.: 
-.................................................
- [18] (./lab_report(zh_cn).aux)
+[16] (./17341038_傅畅_实验三.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 25926 strings out of 493005
- 516537 string characters out of 6134596
- 763288 words of memory out of 5000000
- 29519 multiletter control sequences out of 15000+600000
- 12641 words of font info for 112 fonts, out of 8000000 for 9000
+ 25861 strings out of 493005
+ 511345 string characters out of 6134596
+ 763286 words of memory out of 5000000
+ 29472 multiletter control sequences out of 15000+600000
+ 11053 words of font info for 101 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 57i,11n,79p,10465b,1588s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 57i,8n,79p,10463b,1654s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on lab_report(zh_cn).pdf (19 pages).
+Output written on 17341038_傅畅_实验三.pdf (17 pages).

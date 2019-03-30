@@ -226,18 +226,12 @@
 
 
 \section{代码分析:}
-\lstset{language=={[x86nasm]Assembler}}
-	\begin{lstlisting}[caption={asm code },tabsize=4,basicstyle=\footnotesize,captionpos=b]
-  \end{lstlisting}
-  
-\begin{lstlisting}[caption={一段C代码},captionpos=b]
-  #include <stdio.h>
-  int main (int argc, char *argv[]){
-    printf("Hello world!");
-  }
-\end{lstlisting}
+
       \subsection{shell代码逻辑}
-      \begin{lstlisting}[caption={一段C代码},captionpos=b]
+      整个shell的逻辑比较简单，不断输入字符并在屏幕上追踪显示；如果输入了删除符0x8则退格显示。\\
+      等到输入回车换行符之后，光标换行Enterline()，并扫描命令行，跳进命令解释函数exec\_single()
+
+      \begin{lstlisting}[caption={shell函数},captionpos=b]
 void shell(){
     for (;;){
       char p[15]= "fuchang@1038 $\0";
@@ -261,11 +255,10 @@ void shell(){
     }
   }
       \end{lstlisting}
-      整个shell的逻辑比较简单，不断输入字符并在屏幕上追踪显示；如果输入了删除符0x8则退格显示。\\
-      等到输入回车换行符之后，光标换行Enterline()，并扫描命令行，跳进命令解释函数exec\_single()
-
       \subsection{ls现实当前文件信息}
-      \begin{lstlisting}[caption={一段C代码},captionpos=b]
+      该ls命令会将表中的所有文件的文件名都输出\\
+      另外我设计的ls命令带有一个可选参数$-al$，该参数下ls会将文件的所有详情信息全部输出。\\
+      \begin{lstlisting}[caption={dir()函数},captionpos=b]
 void dir(int showall){
 	char *p;
 	for (volatile int i=0; i<32; ++i){
@@ -294,11 +287,8 @@ void dir(int showall){
 	if ( !showall)Enterline(&row,&col);
 }
       \end{lstlisting}
-      
-      该ls命令会将表中的所有文件的文件名都输出\\
-      另外我设计的ls命令带有一个可选参数$-al$，该参数下ls会将文件的所有详情信息全部输出。\\
-      为了方便读取文件信息，我对每一条文件信息都写了对应的函数
-      \begin{lstlisting}[caption={一段C代码},captionpos=b]
+      为了方便读取文件信息，我对每一条文件信息都写了对应的函数    
+      \begin{lstlisting}[caption={文件条目读取},captionpos=b]
 
 typedef char* itemPtr;
 int sectionLoc(itemPtr p){return (((int)p[9])<<8) + p[8];}
@@ -307,8 +297,10 @@ int createTim(itemPtr p){return ((  (int)p[13])<<8)+p[12];}
 int fileTyp(itemPtr p){return (((int)p[15])<<8)+p[14];}
       \end{lstlisting}
       \subsection{对批处理文件与bin文件的执行}
-  
-      \begin{lstlisting}[caption={一段C代码},captionpos=b]
+      该函数的解释过程其实就是对两个指令字符串的匹配过程。整个过程比较冗余的还是对非法输入的判断。\\
+      对用户bin文件的执行和用户batch文件的执行还是有不同的，用户batch文件本质上还是一堆指令字符串\\
+
+      \begin{lstlisting}[caption={解释并执行用户程序},captionpos=b]
 void exec_single(char *cmd, int len){
   if ( strncmp(cmd, "./",2)==0){
     int i=2,j,k;
@@ -337,10 +329,22 @@ void exec_single(char *cmd, int len){
     puts("command not found!",18, &row, &col);
 }
       \end{lstlisting}
-      该函数的解释过程其实就是对两个指令字符串的匹配过程。整个过程比较冗余的还是对非法输入的判断。\\
-      对用户bin文件的执行和用户batch文件的执行还是有不同的，用户batch文件本质上还是一堆指令字符串\\
+
+      用户所执行的批处理命令的执行程序，直接解析带有$\backslash r$作为分隔符的字符串。
+
+            \begin{lstlisting}[caption={执行用户批处理文件},captionpos=b]
+void exec_batch(char *batchs, int len){
+  for (volatile int i=0,j; batchs[i] && i<len; i=j){
+    for (; batchs[i]==' ' && i<len; ++i);
+    for (j=i; batchs[j]!='\r'&&batchs[j]!='\n' && batchs[j] && j<len; ++j);
+    if (i==j){ ++j;continue;}
+    exec_single(batchs+i, j-i);
+  }
+}
+      \end{lstlisting}
+
       \lstset{language=={[x86nasm]Assembler}}
-  \begin{lstlisting}[caption={asm code },tabsize=4,basicstyle=\footnotesize,captionpos=b]
+  \begin{lstlisting}[caption={批处理程序内容 },tabsize=4,basicstyle=\footnotesize,captionpos=b]
     bat.sh_start:
     db "./prog2",0xa,"./prog1",0xa
     times 512-($-bat.sh_start) db 0
@@ -350,7 +354,7 @@ void exec_single(char *cmd, int len){
   调用nasm中的用户程序，需要加载其到对应的内存并跳转执行，这里的run\_user\_prog和get\_user\_bat用nasm写的
   都是得到目的地地址或者命令地址然后直接执行
       \lstset{language=={[x86nasm]Assembler}}
-      \begin{lstlisting}[caption={asm code },tabsize=4,basicstyle=\footnotesize,captionpos=b]
+      \begin{lstlisting}[caption={获取首地址之后，直接跳转执行},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 run_user_prog:			;debug
         ; run user's bin prog
     push ax
@@ -390,7 +394,7 @@ o32	ret
         \subsubsection{putchar}
         调用10号中断，将字符串输出到第0页的指定位置
         \lstset{language=={[x86nasm]Assembler}}
-        \begin{lstlisting}[caption={asm code },tabsize=4,basicstyle=\footnotesize,captionpos=b]
+        \begin{lstlisting}[caption={putchar },tabsize=4,basicstyle=\footnotesize,captionpos=b]
 asm_putchar:			;debugged
 push ax
 push bx
@@ -425,7 +429,7 @@ o32	ret
         \subsubsection{getchar}
         getchar实现比较简单，调用16h中断后，所得ascii码直接存在了al中，作为返回值可以直接ret
         \lstset{language=={[x86nasm]Assembler}}
-        \begin{lstlisting}[caption={asm code },tabsize=4,basicstyle=\footnotesize,captionpos=b]
+        \begin{lstlisting}[caption={几行getchar },tabsize=4,basicstyle=\footnotesize,captionpos=b]
 getchar:			;debugged
   mov ax,0x0
   int 16h
@@ -434,7 +438,7 @@ o32 ret
         
         \subsubsection{屏幕下滚}
         \lstset{language=={[x86nasm]Assembler}}
-  \begin{lstlisting}[caption={asm code },tabsize=4,basicstyle=\footnotesize,captionpos=b]
+  \begin{lstlisting}[caption={10h6h功能，懒人上卷 },tabsize=4,basicstyle=\footnotesize,captionpos=b]
 ScrollDown:			;debugged
 
     push ax
@@ -459,7 +463,7 @@ ScrollDown:			;debugged
   
         \subsubsection{设置光标}
         \lstset{language=={[x86nasm]Assembler}}
-  \begin{lstlisting}[caption={asm code },tabsize=4,basicstyle=\footnotesize,captionpos=b]
+  \begin{lstlisting}[caption={根据用栈传进来的参数设置光标 },tabsize=4,basicstyle=\footnotesize,captionpos=b]
   setCursor: ; debugged
     push dx
     push bx
@@ -482,7 +486,7 @@ ScrollDown:			;debugged
   \end{lstlisting}
   
       然后在c语言中就可以比较方便地实现puts,putnum,Enterline等函数：
-      \begin{lstlisting}[caption={一段C代码},captionpos=b]
+      \begin{lstlisting}[caption={stdio.h},captionpos=b]
 void putchar(char ch, int *r, int *c){  // used for
   asm_putchar(ch, *r, *c);
   ++(*c);
@@ -507,13 +511,25 @@ void putnum(int num,int *r, int *c){
 }
       \end{lstlisting}
       \subsection{makefile}
+      makefile在系统调试的时候给我的工作带来了极大的便捷\\
+      里面的内容大多数是参考老师PPT上的内容，只不过自己编译的时候会出现地址重定义的问题，gcc中补上-fno-XXX等参数就可以了
+      \begin{lstlisting}[caption={makefile},captionpos=b]
+all:
+  gcc -m32 -Og -c ker.c -o ker.o -fno-PIC -fno-builtin -nostdinc -fno-stack-protector
+  nasm -f elf -g -F stabs  loader.asm -o loa.o
+  ld -m elf_i386 -N loa.o ker.o -s -Ttext 0x7c00 --oformat binary -o fd0 --entry=_start
 
-\section{实验结果与分析（含重要数据结果分析或核心代码流程分析）:}
+clean:
+  rm *.o
+        
+      \end{lstlisting}      
+
+\section{实验结果与分析}
 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-09-42.png}
-  \bottomcaption{\xiaowuhao{打开程序显示命令行}}
+  \bottomcaption{\xiaowuhao{打开程序显示终端}}
   \end{figure}
   
   \begin{figure}[!htbp]
@@ -525,135 +541,55 @@ void putnum(int num,int *r, int *c){
   \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-10-28.png}
-    \bottomcaption{\xiaowuhao{Shot3}}
+    \bottomcaption{\xiaowuhao{输入ls以及ls -al指令之后，显示了文件名及详情信息}}
   \end{figure}
   \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-10-31.png}
-    \bottomcaption{\xiaowuhao{Shot3}}
+    \bottomcaption{\xiaowuhao{输入"./prog1之后，程序运行在新的窗口"，可以}}
   \end{figure}
   \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-10-37.png}
-    \bottomcaption{\xiaowuhao{Shot3}}
+    \bottomcaption{\xiaowuhao{用户程序1按回车之后，回到了主界面}}
   \end{figure}
   \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-10-48.png}
-    \bottomcaption{\xiaowuhao{Shot3}}
+    \bottomcaption{\xiaowuhao{执行用户三，该小球在原来界面执行}}
   \end{figure}
   \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-10-48_-_1.png}
-    \bottomcaption{\xiaowuhao{Shot3}}
+    \bottomcaption{\xiaowuhao{用户三继续执行}}
   \end{figure}
   \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-10-56.png}
-    \bottomcaption{\xiaowuhao{Shot3}}
+    \bottomcaption{\xiaowuhao{用户三继续执行}}
   \end{figure}
   \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-11-20.png}
-    \bottomcaption{\xiaowuhao{Shot3}}
+    \bottomcaption{\xiaowuhao{这里的下卷功能非常方便，输入若干回车之后，保持下端标识完整}}
   \end{figure}
   \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-11-39.png}
-    \bottomcaption{\xiaowuhao{Shot3}}
+    \bottomcaption{\xiaowuhao{执行用户批处理}}
   \end{figure}
   \begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{imgs/Screenshot_from_2019-03-29_21-11-51.png}
-    \bottomcaption{\xiaowuhao{Shot3}}
+    \bottomcaption{\xiaowuhao{程序跳入执行，并成功返回}}
   \end{figure}
-(自行填写。每个实验项目的格式范例：
-\begin{itemize}
-  \item 关键流程分析
-  \item 实验结果 \\ 文字描述或者截图（所作的图）。必须有截图，截图数量不少于2幅。
-  \item 结果分析 \\ 对每一个结果，必须有相应分析，如解释图表反映的内涵、缘由，是否达到预期目标，是否可改进等等。)
-\end{itemize}
+
 
 \section{总结及心得体会:}
 
-(自行填写。必须写点什么，不能写“无”)
-
-\section{对本实验过程及方法、手段的改进建议:}
-
-(自行填写。必须写点什么，不能写“无”)
-
-（注意：八，九部分能反映出实验的态度、方法和效果，应重点阐述，字数勿少，独立完成，勿参考其他报告，避免雷同）
-
-\vspace{4cm}
-\begin{flushright}
-\begin{tabular}{lc}
-\sihao{\hei{报告评分：}}& \sihao{\hei{X~X~X}}\\
-\sihao{\hei{指导教师签字：}}& \sihao{\hei{X~X~X}}\\
-\end{tabular}
-\end{flushright}
-
-\begin{appendix}
-
-\section{代码示例}
-
-\begin{lstlisting}[caption={一段C代码},captionpos=b]
-#include <stdio.h>
-int main (int argc, char *argv[]){
-  printf("Hello world!");
-}
-\end{lstlisting}
-
-\section{表格示例}
-\begin{table}[!h!tbp]
-\caption{一个简单的表格}\label{tab1}
-  \centering
-  \begin{tabular}{|l|c|c|}
-	\hline
-	功能          &WEB         &APP         \\ \hline
-	注册          &$\surd$     &$\surd$     \\ \hline
-	登录          &$\surd$     &$\surd$     \\ \hline
-	推送          &$\times$    &$\surd$     \\ \hline
-\end{tabular}
-\end{table}
-
-\begin{table}[!h!tbp]
-\caption{自定义表格}\label{tab2}
-  \centering
-\begin{tabular*}{0.75\textwidth}{@{\extracolsep{\fill}}lcc}
-    \toprule
-    功能          &WEB         &APP         \\
-    \midrule
-    注册          &$\surd$     &$\surd$     \\
-    登录          &$\surd$     &$\surd$     \\
-    推送          &$\times$    &$\surd$     \\
-    \bottomrule
-\end{tabular*}
-\end{table}
-
-
-\section{图片示例}
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{logo}
-\bottomcaption{\xiaowuhao{电子科技大学}}
-\end{figure}
-
-\begin{algorithm}
-\caption{某个算法}
-\begin{algorithmic}[1]  %每行显示行号
-\Require 某个输入
-\Ensure 某个输出
-\Function {函数名} {参数列表}
-    \State 某个变量  $\gets$ 某个变量
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-
-\section{字体示例}
-\hei{黑体}
-\hwxk{华文行楷}
-
-\end{appendix}
+第三次写操作系统实验，我的汇编代码第一次超过了500+行，代码的组织和管理提高工作效率的作用上变得非常重要\\
+\indent 第一次使用nasm 和gcc交叉编译，很多问题在相互调用以及链接的过程中暴露无遗；我不得不补上一些相关的编译原理的知识，才能最终理解程序代码的bug所在\\
+\indent 调试最久的一个bug是在c程序调用汇编然后从汇编ret回c函数内的时候，由于没有call dword，导致从栈中取出了错误的返回地址，陷入了死循环。\\
+\indent 另外一个错误是在ld的时候，由于我错误地使用了section语法，导致ld出来的bin文件中我的分区被全部打乱。我当时也被其他bug搞高的焦头烂额，没有心思再思考这个问题，只是现在觉得所有语法功能没有想象中的那么简单，不因当直接望文生义。\\
 
 \end{document}

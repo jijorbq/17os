@@ -1,0 +1,47 @@
+\relax 
+\@writefile{toc}{\contentsline {section}{\numberline {一、\nobreakspace {}}实验目的:用C和汇编实现操作系统内核}{1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（一）}用C和汇编实现操作系统内核}{1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（二）}增加批处理能力}{1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.1}提供用户返回内核的一种解决方案}{1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.2}一条在内核的C模块中实现}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {二、\nobreakspace {}}实验原理:}{1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（一）}c函数与nasm函数的相互调用}{1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（二）}c语言与nasm交叉编译}{1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（三）}obj文件的链接}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（四）}执行用户程序前后的寄存器保护措施}{2}}
+\@writefile{toc}{\contentsline {section}{\numberline {三、\nobreakspace {}}代码分析:}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（一）}shell代码逻辑}{2}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}shell函数}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（二）}ls现实当前文件信息}{3}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}dir()函数}{3}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}文件条目读取}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（三）}对批处理文件与bin文件的执行}{4}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}解释并执行用户程序}{5}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}执行用户批处理文件}{6}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}批处理程序内容}{6}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}获取首地址之后，直接跳转执行}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（四）}IO函数设计}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}putchar}{7}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}putchar}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}getchar}{8}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}几行getchar}{8}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.3}屏幕下滚}{8}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}10h6h功能，懒人上卷}{8}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.4}设置光标}{9}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}根据用栈传进来的参数设置光标}{9}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}stdio.h}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（五）}makefile}{10}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}makefile}{10}}
+\@writefile{toc}{\contentsline {section}{\numberline {四、\nobreakspace {}}实验结果与分析}{11}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {打开程序显示终端}\relax }}{11}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {输入\textbf  {ls}指令}\relax }}{11}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {输入ls以及ls -al指令之后，显示了文件名及详情信息}\relax }}{12}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {输入"./prog1之后，程序运行在新的窗口"，可以}\relax }}{12}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {用户程序1按回车之后，回到了主界面}\relax }}{13}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {执行用户三，该小球在原来界面执行}\relax }}{13}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {用户三继续执行}\relax }}{14}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {用户三继续执行}\relax }}{14}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {这里的下卷功能非常方便，输入若干回车之后，保持下端标识完整}\relax }}{15}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {执行用户批处理}\relax }}{15}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces \fontsize  {9pt}{\baselineskip }\selectfont  {程序跳入执行，并成功返回}\relax }}{16}}
+\@writefile{toc}{\contentsline {section}{\numberline {五、\nobreakspace {}}总结及心得体会:}{16}}
