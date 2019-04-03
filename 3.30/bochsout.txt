@@ -29,13 +29,13 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0x7f479d917010. after alignment, vector=0x7f479d918000
+00000000000i[MEM0 ] allocated memory at 0x7fdf82cea010. after alignment, vector=0x7fdf82ceb000
 00000000000i[MEM0 ] 128.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=128
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/gdb/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/41472 ('/usr/local/share/bochs/gdb/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Sat Mar 30 23:03:22 2019 (time0=1553958202)
+00000000000i[CMOS ] Setting initial clock to: Wed Apr  3 20:31:46 2019 (time0=1554294706)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: 'fd0' ro=0, h=2,t=80,spt=18
@@ -58,7 +58,9 @@
 00000000000i[     ] init_dev of 'keyboard' plugin device by virtual method
 00000000000i[KBD  ] will paste characters every 1000 keyboard ticks
 00000000000i[     ] init_dev of 'harddrv' plugin device by virtual method
-00000000000i[HD   ] Using boot sequence floppy, none, none
+00000000000i[HD   ] HD on ata0-0: 'h.img' 'flat' mode 
+00000000000i[HD   ] translation on ata0-0 set to 'none'
+00000000000i[HD   ] Using boot sequence floppy, disk, none
 00000000000i[HD   ] Floppy boot signature check is enabled
 00000000000i[     ] init_dev of 'serial' plugin device by virtual method
 00000000000i[SER  ] com1 at 0x03f8 irq 4
@@ -99,39 +101,41 @@
 00000000000i[     ] reset of 'parallel' plugin device by virtual method
 00000000000i[XGUI ] [x] Mouse off
 00000004662i[BIOS ] $Revision: 13073 $ $Date: 2017-02-16 22:43:52 +0100 (Do, 16. Feb 2017) $
-00000318050i[KBD  ] reset-disable command received
-00000320819i[BIOS ] Starting rombios32
-00000321257i[BIOS ] Shutdown flag 0
-00000321840i[BIOS ] ram_size=0x08000000
-00000322283i[BIOS ] ram_end=128MB
-00000362827i[BIOS ] Found 1 cpu(s)
-00000376411i[BIOS ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
-00000394868i[BIOS ] bios_table_cur_addr: 0x000f9cd8
-00000522485i[VBIOS] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
-00000522556i[VGA  ] VBE known Display Interface b0c0
-00000522588i[VGA  ] VBE known Display Interface b0c5
-00000525513i[VBIOS] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
+00000318065i[KBD  ] reset-disable command received
+00000320796i[BIOS ] Starting rombios32
+00000321234i[BIOS ] Shutdown flag 0
+00000321817i[BIOS ] ram_size=0x08000000
+00000322260i[BIOS ] ram_end=128MB
+00000362774i[BIOS ] Found 1 cpu(s)
+00000376358i[BIOS ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
+00000394815i[BIOS ] bios_table_cur_addr: 0x000f9cd8
+00000522432i[VBIOS] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
+00000522503i[VGA  ] VBE known Display Interface b0c0
+00000522535i[VGA  ] VBE known Display Interface b0c5
+00000525460i[VBIOS] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
 00000600000i[XGUI ] charmap update. Font Height is 16
-00013161879i[BIOS ] Booting from 0000:7c00
-00013161987i[CPU0 ] WARNING: HLT instruction with IF=0!
-02192200000i[     ] dbg: Quit
-02192200000i[CPU0 ] CPU is in protected mode (halted)
-02192200000i[CPU0 ] CS.d_b = 32 bit
-02192200000i[CPU0 ] SS.d_b = 32 bit
-02192200000i[CPU0 ] | EAX=0000002e  EBX=00000000  ECX=00090018  EDX=00000000
-02192200000i[CPU0 ] | ESP=00007c00  EBP=00007bfc  ESI=000e0000  EDI=0000ffac
-02192200000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
-02192200000i[CPU0 ] | SEG selector     base    limit G D
-02192200000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-02192200000i[CPU0 ] |  CS:0008( 0001| 0|  0) 00007c00 000001ff 0 1
-02192200000i[CPU0 ] |  DS:0010( 0002| 0|  0) 000b8000 0000ffff 0 1
-02192200000i[CPU0 ] |  SS:0018( 0003| 0|  0) 00000000 00007a00 0 1
-02192200000i[CPU0 ] |  ES:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-02192200000i[CPU0 ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-02192200000i[CPU0 ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-02192200000i[CPU0 ] | EIP=00000109 (00000109)
-02192200000i[CPU0 ] | CR0=0x60000011 CR2=0x00000000
-02192200000i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-02192200000i[CMOS ] Last time is 1553958750 (Sat Mar 30 23:12:30 2019)
-02192200000i[XGUI ] Exit
-02192200000i[CTRL ] quit_sim called with exit code 0
+00000869296i[BIOS ] ata0-0: PCHS=1/1/2 translation=none LCHS=1/1/2
+00004316358i[BIOS ] IDE time out
+00016457406i[BIOS ] Booting from 0000:7c00
+00016600000i[XGUI ] charmap update. Font Height is 16
+00250400000i[     ] dbg: Quit
+00250400000i[CPU0 ] CPU is in real mode (active)
+00250400000i[CPU0 ] CS.d_b = 16 bit
+00250400000i[CPU0 ] SS.d_b = 16 bit
+00250400000i[CPU0 ] | EAX=00000020  EBX=00007c30  ECX=00090000  EDX=00000000
+00250400000i[CPU0 ] | ESP=0000ffd6  EBP=00000000  ESI=000e0000  EDI=0000ffac
+00250400000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf ZF af PF cf
+00250400000i[CPU0 ] | SEG selector     base    limit G D
+00250400000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00250400000i[CPU0 ] |  CS:0000( 0004| 0|  0) 00000000 0000ffff 0 0
+00250400000i[CPU0 ] |  DS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00250400000i[CPU0 ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00250400000i[CPU0 ] |  ES:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00250400000i[CPU0 ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00250400000i[CPU0 ] |  GS:b800( 0005| 0|  0) 000b8000 0000ffff 0 0
+00250400000i[CPU0 ] | EIP=00007c2b (00007c2b)
+00250400000i[CPU0 ] | CR0=0x60000010 CR2=0x00000000
+00250400000i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
+00250400000i[CMOS ] Last time is 1554294768 (Wed Apr  3 20:32:48 2019)
+00250400000i[XGUI ] Exit
+00250400000i[CTRL ] quit_sim called with exit code 0
