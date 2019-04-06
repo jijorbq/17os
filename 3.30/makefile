@@ -7,7 +7,7 @@
 all:
 #	nasm c09_2.asm -f bin -o h.img
 #	nasm c08_mbr.asm -f bin -o fd0
-	nasm intrk.asm -f bin -o fd0
+	nasm c11_mbr.asm -f bin -o fd0
 
 clean:
 	rm *.o
