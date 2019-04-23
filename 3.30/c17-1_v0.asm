@@ -38,24 +38,10 @@
 ;-------------------------------------------------------------------------------
 
 start:
-            ; xor ebx,ebx
-            ; mov bx , [count]
-            ; shr bx , 10
-            ; and bx , 0x3
-            ; add ebx, message_1
-            ; mov cl , [ebx]
-            ; call far [PrintChar]
-
-            ; mov bx, [count]
-            ; inc bx
-            ; mov [count], bx
-
-
-      ;          mov ebx,message_0
-      ;    call far [PrintString]
-          jmp start  
-                
-         call far [TerminateProgram]              ;退出，并将控制权返回到核心 
-    
-;-------------------------------------------------------------------------------
-program_end:
+            xor ebx,ebx
+            mov bx , [count]
+            shr bx , 10
+            and bx , 0x3
+            add ebx, message_1
+            mov cl , [ebx]
+            call far [PrintChar

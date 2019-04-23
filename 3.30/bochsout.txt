@@ -29,13 +29,13 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0x7f2fba150010. after alignment, vector=0x7f2fba151000
+00000000000i[MEM0 ] allocated memory at 0x7fe68baed010. after alignment, vector=0x7fe68baee000
 00000000000i[MEM0 ] 128.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=128
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/gdb/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/41472 ('/usr/local/share/bochs/gdb/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Tue Apr  9 19:38:06 2019 (time0=1554809886)
+00000000000i[CMOS ] Setting initial clock to: Tue Apr 23 13:15:10 2019 (time0=1555996510)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] tried to open 'fd0' read/write: No such file or directory
@@ -115,28 +115,28 @@
 00000522535i[VGA  ] VBE known Display Interface b0c5
 00000525460i[VBIOS] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
 00000600000i[XGUI ] charmap update. Font Height is 16
-00000869666i[BIOS ] ata0-0: PCHS=1/1/101 translation=large LCHS=1/1/101
+00000869666i[BIOS ] ata0-0: PCHS=2/16/64 translation=large LCHS=2/16/64
 00004316728i[BIOS ] IDE time out
 00016286282i[BIOS ] Booting from 0000:7c00
-00016375261i[XGUI ] charmap update. Font Height is 16
-00016375262i[     ] dbg: Quit
-00016375262i[CPU0 ] CPU is in protected mode (active)
-00016375262i[CPU0 ] CS.d_b = 32 bit
-00016375262i[CPU0 ] SS.d_b = 32 bit
-00016375262i[CPU0 ] | EAX=00000007  EBX=000004f8  ECX=00100000  EDX=0000ec00
-00016375262i[CPU0 ] | ESP=00000000  EBP=00000000  ESI=00007e00  EDI=00000422
-00016375262i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
-00016375262i[CPU0 ] | SEG selector     base    limit G D
-00016375262i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00016375262i[CPU0 ] |  CS:000f( 0001| 1|  3) 00100850 00000052 0 1
-00016375262i[CPU0 ] |  DS:0007( 0000| 1|  3) 001000e8 00000327 0 1
-00016375262i[CPU0 ] |  SS:001f( 0003| 1|  3) 001018e8 ffffefff 1 1
-00016375262i[CPU0 ] |  ES:0000( 0000| 0|  0) 00000000 00000000 0 0
-00016375262i[CPU0 ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00016375262i[CPU0 ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00016375262i[CPU0 ] | EIP=00000000 (00000000)
-00016375262i[CPU0 ] | CR0=0x60000011 CR2=0x00000000
-00016375262i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-00016375262i[CMOS ] Last time is 1554809890 (Tue Apr  9 19:38:10 2019)
-00016375262i[XGUI ] Exit
-00016375262i[CTRL ] quit_sim called with exit code 0
+00016400000i[XGUI ] charmap update. Font Height is 16
+00231675109i[     ] dbg: Quit
+00231675109i[CPU0 ] CPU is in protected mode (active)
+00231675109i[CPU0 ] CS.d_b = 32 bit
+00231675109i[CPU0 ] SS.d_b = 32 bit
+00231675109i[CPU0 ] | EAX=00080000  EBX=8001f000  ECX=00000723  EDX=80048e00
+00231675109i[CPU0 ] | ESP=80007000  EBP=00000000  ESI=00000100  EDI=00040000
+00231675109i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
+00231675109i[CPU0 ] | SEG selector     base    limit G D
+00231675109i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00231675109i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00231675109i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00231675109i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00231675109i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00231675109i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00231675109i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00231675109i[CPU0 ] | EIP=8004014c (8004014c)
+00231675109i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
+00231675109i[CPU0 ] | CR3=0x00020000 CR4=0x00000000
+00231675109i[CMOS ] Last time is 1555996567 (Tue Apr 23 13:16:07 2019)
+00231675109i[XGUI ] Exit
+00231675109i[CTRL ] quit_sim called with exit code 0

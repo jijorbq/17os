@@ -11,9 +11,10 @@
 ;-------------------------------------------------------------------------------
 
          ;符号地址检索表
-         salt_begin:
+         salt_begin:                                     
          PrintChar      db  '@PrintChar'
                      times 256-($-PrintChar) db 0
+
          PrintString      db  '@PrintString'
                      times 256-($-PrintString) db 0
                      
@@ -28,34 +29,32 @@
          
          salt_end:
 
-         message_0        db  '  User task B->$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
+         message_0        db  '\|/-'
                           db  0x0d,0x0a,0
-         message_1        db '\|/-'
-         count            dw  0
+         count db 0
 
 ;-------------------------------------------------------------------------------
       [bits 32]
 ;-------------------------------------------------------------------------------
 
 start:
-            ; xor ebx,ebx
-            ; mov bx , [count]
-            ; shr bx , 10
-            ; and bx , 0x3
-            ; add ebx, message_1
-            ; mov cl , [ebx]
-            ; call far [PrintChar]
-
-            ; mov bx, [count]
-            ; inc bx
-            ; mov [count], bx
-
-
-      ;          mov ebx,message_0
+          
+      ;    mov ebx,message_0              tag by me
       ;    call far [PrintString]
-          jmp start  
-                
-         call far [TerminateProgram]              ;退出，并将控制权返回到核心 
+      xor ebx,ebx
+      mov bl , [count]
+      add ebx, message_0
+      mov cl , [ebx]
+      call far [PrintChar]
+
+      mov bl , [count]
+      add bl , 1
+
+      and ebx , 0x3
+      mov [count], bl
+      ; jmp start  
+            
+      call far [TerminateProgram]              ;退出，并将控制权返回到核心 
     
 ;-------------------------------------------------------------------------------
 program_end:

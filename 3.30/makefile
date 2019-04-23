@@ -5,10 +5,10 @@
 # a1.o:a1.asm
 # 	nasm -f elf a1.asm -o a1.o
 all:
-	nasm -f bin c13_mbr.asm -o cmbr.bin
-	nasm -f bin c14_core.asm -o ccore.bin
-	nasm -f bin c13.asm -o c1.bin
-	# nasm -f bin c17-2.asm -o c2.bin
+	nasm -f bin c17_mbr.asm -o cmbr.bin
+	nasm -f bin c17_core.asm -o ccore.bin
+	nasm -f bin c17-1.asm -o c1.bin
+	nasm -f bin c17-2.asm -o c2.bin
 
 clean:
 	rm *.bin

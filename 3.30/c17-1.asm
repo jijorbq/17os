@@ -36,8 +36,7 @@
 
 start:
           
-         mov ebx,message_0
-         call far [PrintString]
+
          jmp start
                   
          call far [TerminateProgram]              ;退出，并将控制权返回到核心 
