@@ -29,13 +29,13 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0x7f3b369d2010. after alignment, vector=0x7f3b369d3000
+00000000000i[MEM0 ] allocated memory at 0x7fb57395d010. after alignment, vector=0x7fb57395e000
 00000000000i[MEM0 ] 128.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=128
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/gdb/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/41472 ('/usr/local/share/bochs/gdb/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Wed Apr 24 19:57:38 2019 (time0=1556107058)
+00000000000i[CMOS ] Setting initial clock to: Thu Apr 25 09:12:50 2019 (time0=1556154770)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] tried to open 'fd0' read/write: No such file or directory
@@ -119,24 +119,28 @@
 00004316781i[BIOS ] IDE time out
 00016286283i[BIOS ] Booting from 0000:7c00
 00016400000i[XGUI ] charmap update. Font Height is 16
-00665316679i[     ] dbg: Quit
-00665316679i[CPU0 ] CPU is in protected mode (active)
-00665316679i[CPU0 ] CS.d_b = 32 bit
-00665316679i[CPU0 ] SS.d_b = 32 bit
-00665316679i[CPU0 ] | EAX=00080100  EBX=8001f000  ECX=00000723  EDX=80048e00
-00665316679i[CPU0 ] | ESP=80007000  EBP=00000000  ESI=00000100  EDI=00040000
-00665316679i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
-00665316679i[CPU0 ] | SEG selector     base    limit G D
-00665316679i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00665316679i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00665316679i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00665316679i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00665316679i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00665316679i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00665316679i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00665316679i[CPU0 ] | EIP=800403c5 (800403c5)
-00665316679i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
-00665316679i[CPU0 ] | CR3=0x00020000 CR4=0x00000000
-00665316679i[CMOS ] Last time is 1556107224 (Wed Apr 24 20:00:24 2019)
-00665316679i[XGUI ] Exit
-00665316679i[CTRL ] quit_sim called with exit code 0
+00267184000i[KBD  ] internal keyboard buffer full, ignoring scancode.(24)
+00269088000i[KBD  ] internal keyboard buffer full, ignoring scancode.(a4)
+00270308000i[KBD  ] internal keyboard buffer full, ignoring scancode.(24)
+00271712000i[KBD  ] internal keyboard buffer full, ignoring scancode.(a4)
+00330736970i[     ] dbg: Quit
+00330736970i[CPU0 ] CPU is in protected mode (active)
+00330736970i[CPU0 ] CS.d_b = 32 bit
+00330736970i[CPU0 ] SS.d_b = 32 bit
+00330736970i[CPU0 ] | EAX=00080100  EBX=8001f000  ECX=00000723  EDX=80048e00
+00330736970i[CPU0 ] | ESP=80007000  EBP=00000000  ESI=00000100  EDI=00040000
+00330736970i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
+00330736970i[CPU0 ] | SEG selector     base    limit G D
+00330736970i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00330736970i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00330736970i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00330736970i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00330736970i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00330736970i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00330736970i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00330736970i[CPU0 ] | EIP=800404ad (800404ad)
+00330736970i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
+00330736970i[CPU0 ] | CR3=0x00020000 CR4=0x00000000
+00330736970i[CMOS ] Last time is 1556154852 (Thu Apr 25 09:14:12 2019)
+00330736970i[XGUI ] Exit
+00330736970i[CTRL ] quit_sim called with exit code 0
