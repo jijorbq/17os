@@ -2,6 +2,7 @@
          flat_4gb_data_seg_sel  equ  0x0018      ;4GB数据段选择子 
          idt_linear_address     equ  0x8001f000  ;IDT线性基地址 
          VideoSite                equ 0x800b8000
+         User0Start                equ 0x80040508
 SECTION  core  vstart=0x80040000
 
          ;系统核心的头部，用于加载核心程序 
@@ -514,21 +515,10 @@ start:
 
          sti                                ;开放硬件中断
 
-         int 0x12                                ; 依次调用自定义的软中断
-         int 0x13
-         int 0x14
-         int 0x11
-
-         mov cl, '#'
-         mov ch, 0x07
-  .core:
-       mov [0x800b8004],cx                       ; 主过程不断反色地显示一个‘#’字符，
-                                                 ; 观察其与时钟中断的并行程度
-       xor ch, 0x1
-         jmp .core
-            
+         jmp flat_4gb_code_seg_sel:User0Start
+       ; jmp $
 core_code_end:
-
+       hlt
 ;-------------------------------------------------------------------------------
 SECTION core_trail
 ;-------------------------------------------------------------------------------

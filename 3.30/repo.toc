@@ -1,0 +1,24 @@
+\contentsline {section}{\numberline {一、\nobreakspace {}}实验要求}{2}
+\contentsline {subsection}{\numberline {（一）}利用时钟中断，在右下角轮流显示转轮}{2}
+\contentsline {subsection}{\numberline {（二）}编写键盘中断响应程序}{2}
+\contentsline {subsection}{\numberline {（三）}编写软中断服务程序}{2}
+\contentsline {section}{\numberline {二、\nobreakspace {}}实验配置}{2}
+\contentsline {subsection}{\numberline {（一）}实验支撑环境}{2}
+\contentsline {section}{\numberline {三、\nobreakspace {}}x86保护模式学习}{2}
+\contentsline {subsection}{\numberline {（一）}使用选择子访存}{2}
+\contentsline {subsection}{\numberline {（二）}分页机制}{2}
+\contentsline {subsection}{\numberline {（三）}中断选择子}{2}
+\contentsline {section}{\numberline {四、\nobreakspace {}}实验代码设计}{2}
+\contentsline {subsection}{\numberline {（一）}从软盘到使用硬盘启动}{2}
+\contentsline {subsection}{\numberline {（二）}mbr.asm}{3}
+\contentsline {subsubsection}{\numberline {4.2.1}加载内核}{3}
+\contentsline {subsubsection}{\numberline {4.2.2}安装GDT}{5}
+\contentsline {subsubsection}{\numberline {4.2.3}开启分页}{6}
+\contentsline {subsection}{\numberline {（三）}core.asm}{7}
+\contentsline {subsubsection}{\numberline {4.3.1}安装idt}{7}
+\contentsline {subsubsection}{\numberline {4.3.2}初始化8259A}{9}
+\contentsline {subsubsection}{\numberline {4.3.3}中断处理例程编写}{10}
+\contentsline {subsection}{\numberline {（四）}user.asm}{17}
+\contentsline {subsubsection}{\numberline {4.4.1}软中断调用}{17}
+\contentsline {subsection}{\numberline {（五）}疑难问题解决}{18}
+\contentsline {section}{\numberline {五、\nobreakspace {}}实验总结}{18}

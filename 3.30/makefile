@@ -7,6 +7,7 @@
 all:
 	nasm -f bin mymbr.asm -o cmbr.bin
 	nasm -f bin mycore.asm -o ccore.bin
+	nasm -f bin user0.asm -o c1.bin
 	# nasm -f bin c17-1.asm -o c1.bin
 	# nasm -f bin c17-2.asm -o c2.bin
 

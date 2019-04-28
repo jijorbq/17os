@@ -1,13 +1,13 @@
 fil=h.img
 make
-cat cmbr.bin > h.img # clear and cat in
+cat cmbr.bin > $fil # clear and cat in
 
-cat ccore.bin >> h.img 
-len=$[50*512-$(stat -c %s "$fil")]
+cat ccore.bin >> $fil
+len=$[10*512-$(stat -c %s "$fil")]
 echo len=$len
 dd if=/dev/zero count=$len bs=1 | cat>> $fil
 
-#cat c1.bin >> h.img
+cat c1.bin >> h.img
 # len=$[100*512-$(stat -c %s "$fil")] 
 # echo len=$len
 # dd if=/dev/zero count=$len bs=1 | cat>> $fil

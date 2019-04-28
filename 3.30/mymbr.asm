@@ -1,6 +1,9 @@
 
          core_base_address equ 0x00040000   ;常数，内核加载的起始内存地址 
          core_start_sector equ 0x00000001   ;常数，内核的起始逻辑扇区号 
+         
+         user0_base_address equ 0x00040500   ;常数，用户程序加载的起始内存地址 
+         user0_start_sector equ 0x0000000a   ;常数，用户程序的起始逻辑扇区号 
 
 SECTION  mbr  vstart=0x00007c00         
 
@@ -57,36 +60,22 @@ SECTION  mbr  vstart=0x00007c00
          mov esp,0x7000                     ;堆栈指针
          
          ;以下加载系统核心程序
-         mov edi,core_base_address
-
-         mov eax,core_start_sector
-         mov ebx,edi                        ;起始地址
-         call read_hard_disk_0              ;以下读取程序的起始部分（一个扇区）
-
-         ;以下判断整个程序有多大
-         mov eax,[edi]                      ;核心程序尺寸
-         xor edx,edx
-         mov ecx,512                        ;512字节每扇区
-         div ecx
-
-         or edx,edx
-         jnz @1                             ;未除尽，因此结果比实际扇区数少1
-         dec eax                            ;已经读了一个扇区，扇区总数减1
-   @1:
-         or eax,eax                         ;考虑实际长度≤512个字节的情况
-         jz pge                             ;EAX=0 ?
-
-         ;读取剩余的扇区
-         mov ecx,eax                        ;32位模式下的LOOP使用ECX
-         mov eax,core_start_sector
-         inc eax                            ;从下一个逻辑扇区接着读
-   @2:
-         call read_hard_disk_0
-         inc eax
-         loop @2                            ;循环读，直到读完整个内核
-
+         mov eax ,core_base_address
+         push eax
+       mov eax, core_start_sector
+       push eax
+       call Load_program
+       add esp ,8
+       ; 以下加载用户程序
+       mov eax ,user0_base_address
+         push eax
+       mov eax, user0_start_sector
+       push eax
+       call Load_program
+       add esp ,8
+        
    pge:
-         ;准备打开分页机制。从此，再也不用在段之间转来转去，实在晕乎~ 
+         ;准备打开分页机制.
               
          ;创建系统内核的页目录表PDT
          mov ebx,0x00020000                 ;页目录表PDT的物理地址
@@ -192,6 +181,40 @@ read_hard_disk_0:                           ;从硬盘读取一个逻辑扇区
       
          ret
 
+Load_program:
+;以下加载系统核心程序
+       pushad
+         mov edi,[esp+40]
+
+         mov eax,[esp+36]
+         mov ebx,edi                        ;起始地址
+         call read_hard_disk_0              ;以下读取程序的起始部分（一个扇区）
+
+         ;以下判断整个程序有多大
+         mov eax,[edi]                      ;核心程序尺寸
+         xor edx,edx
+         mov ecx,512                        ;512字节每扇区
+         div ecx
+
+         or edx,edx
+         jnz @1                             ;未除尽，因此结果比实际扇区数少1
+         dec eax                            ;已经读了一个扇区，扇区总数减1
+   @1:
+         or eax,eax                         ;考虑实际长度≤512个字节的情况
+         jz endLoad_program                             ;EAX=0 ?
+
+         ;读取剩余的扇区
+         mov ecx,eax                        ;32位模式下的LOOP使用ECX
+         mov eax,[esp+36]
+         inc eax                            ;从下一个逻辑扇区接着读
+   @2:
+         call read_hard_disk_0
+         inc eax
+         loop @2                            ;循环读，直到读完整个内核
+
+       endLoad_program:
+       popad
+       ret
 ;-------------------------------------------------------------------------------
          pgdt             dw 0              ;GDT的偏移量
                           dd 0x00008000     ;GDT的物理/线性地址
