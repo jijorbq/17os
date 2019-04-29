@@ -236,11 +236,34 @@
 	 
 \section{x86保护模式学习}
 	\subsection{使用选择子访存}
-	选择子在
+	保护模式下，访问的每一段内存，都需要提前跟CPU声明；描述一段内存无非需要它的
+	\begin{enumerate}
+		\item 基地址
+		\item 长度
+		\item 扩展方式（向高地址还是向低地址）
+		\item 之后会用于维护访存秩序的特权级
+		\item 之后会与Cache有联系的“是否存在与主存”
+		\item 指明默认操作数大小。
+		\item 用途的粗分类
+	\end{enumerate}
+	\indent 所以才有了描述符那样奇怪而繁杂的标志位，阅读到后面的章节，我才对这些奇怪的标志位有了进一步的认识\\
+	\indent 这些选择子同样需要按表的方式组织，CPU中有一个专门的寄存器gdtr，指向段描述子表gdt的首地址；段寄存器中则只需要记录用于检索该段的选择子在表中起始位置相对GDT的偏移量，就足够描述一个段了。
+	\indent x86中共有4个控制寄存器,cr0~3。涉及到保护模式开启的另一个标志位是cr0的PE位。将该位设为1，便进入了保护模式。
 	\subsection{分页机制}
-
-	\subsection{中断选择子}
-
+	x86提供页式访存机制。通过页目录--页表两层的结构，将线性（逻辑）地址映射到物理地址。\\
+	\indent 一张页目录和一张页表和一张页都是4kb，4B/项*1024项。页目录中的每一项记录页表的物理首地址，页表每一项的都记录一张4kb页的物理首地址。\\
+	\indent 每个页目录/页表项的高20位表示物理地址的高12位(因为页都是按4kb分配的)；低12位就用来记录和
+	\begin{itemize}
+		\item 高速缓存Cache
+		\item 页读写策略，
+		\item 是否全局页/页表
+	\end{itemize}
+	有关的的信息。页目录需要通过cr3来指向其物理首地址，并把cr0中的PG位置一，来正式开启分页机制。
+	\subsection{中断门}
+	门是一x86中一类用来处理不同特权级代码之间进行控制转移的一种（保护的）格式。本质上它还是一个描述符，只是不同于代码段和数据段而已。\\
+	\indent 调用门，中断门，任务门，陷阱门他们都非常相似，他们都必须包含16位目标代码段的选择子，32位段内偏移量和特权级。\\
+	\indent 类似于GDT，每个中断例程都通过中断门来调用，这些256个中断门组成一个1KB的表（每项4B），由IDTR来指向中断向量表的首地址以及偏移量\\
+	\indent 之后每个对应中断发生时，都通过“中断向量---中断门---目标代码选择子”来实现调用中断例程。
 	% \lstset{language=={[x86nasm]Assembler}}
 	% \begin{lstlisting}[caption={},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 	
@@ -484,14 +507,6 @@ read_hard_disk_0:
 		or eax,0x80000000
 		mov cr0,eax                        ;开启分页机制
 	\end{lstlisting}
-
-% \lstset{language=={[x86nasm]Assembler}}
-% 	\begin{lstlisting}[caption={bochsrc},tabsize=4,basicstyle=\footnotesize,captionpos=b]
-% 	\end{lstlisting}
-
-% \lstset{language=={[x86nasm]Assembler}}
-% 	\begin{lstlisting}[caption={bochsrc},tabsize=4,basicstyle=\footnotesize,captionpos=b]
-% 	\end{lstlisting}
 
 	\subsection{core.asm}
 	core是内核代码段，主要负责中断处理的配置并跳转到用户程序，其内容包括
@@ -990,74 +1005,53 @@ userloop:
 user0_end:
 	\end{lstlisting}
 	
-			
-% 	\begin{enumerate}
-% 		\item 配置bochs的指定映像文件
 		
-% \lstset{language=={[x86nasm]Assembler}}
-% 	\begin{lstlisting}[caption={bochsrc},tabsize=4,basicstyle=\footnotesize,captionpos=b]
-% 	\end{lstlisting}
-	
-	
-		
-		
-% 	\end{enumerate}
-
-	% \begin{figure}[htbp]
-	% 	\centering
-	% 	\includegraphics[width=10cm]{}
-	% 	\bottomcaption{}
-	% \end{figure}
-
-\subsection{疑难问题解决}
-	
-	\begin{itemize}			
-		\item 1
-	\end{itemize}
-
 
 \section{实验结果及分析}
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=15cm]{expr_image/1.png}
-		\bottomcaption{软中断0x12}
+		\bottomcaption{软中断0x12，在左上角显示弹球}
 	\end{figure}
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=15cm]{expr_image/2.png}
-		\bottomcaption{}
+		\bottomcaption{软中断0x13，在右上角显示弹球}
 	\end{figure}
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=15cm]{expr_image/3.png}
-		\bottomcaption{}
+		\bottomcaption{软中断0x14，在右下角显示弹球}
 	\end{figure}
 	
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=15cm]{expr_image/DeepinScrot-5338.png}
-		\bottomcaption{}
+		\bottomcaption{软中断0x11，此时第二行显示个人信息；同时主程序开始执行，显示一个白色的‘\#’号}
 	\end{figure}
 	
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=15cm]{expr_image/DeepinScrot-5455.png}
-		\bottomcaption{}
+		\bottomcaption{主程序中的‘\#’号变成了棕色；并且可见右下角的转轮正常转动}
 	\end{figure}
 
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=15cm]{expr_image/4.png}
-		\bottomcaption{}
+		\bottomcaption{按下键盘任意键，显示了ouch！}
 	\end{figure}
 	
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=15cm]{expr_image/DeepinScrot-5546.png}
-		\bottomcaption{}
+		\bottomcaption{松开键盘，ouch消失；同时主程序的‘\#’继续反色，右下角的风火轮继续转动}
 	\end{figure}
 \section{实验总结}
-
+经过实验三的terminal的锻炼之后，我在实验四挑战进入保护模式得多亏有别人帮助。很多较实模式新的x86体系结构对我来说，非常需要仔细研究学习。我这次实验一改以往“先摸索再查书”的撞南墙做法。
+先沉下心研究手册和书上的说明、范例的代码。之前自己盲目摸索，其实很多坑是不必要自己去死磕上几个小时去学会的。对于我这种新手来说，认真模仿观察别人本身就是一个学习创新的过程。\\
+\indent 尽管本次实验我模仿的东西很多，但是其实自己还是遇到了许多书上没有提到的问题。但相比起实验三，这次实验暂时我没有使用C语言实现一些比较复杂的内容，不过，在结下来的实验中，各种复杂的数据结构(如“PCB”）以及复杂的协议，可能就得跳入C语言了。\\
+\indent 同时我在这过程中改掉了以往全部写完再调试的不良习惯。其实对于这些大型的工程代码，聚沙成塔式地一步步添加小模块--编译调试--添加小模块--编译调试的这一循环往复地构建代码的方式，其实更加高效，因为模块测试是无论如何逃不开的。“自顶向下”地设计程序，但“自底向上”才是编写程序的好顺序。
 \bibliographystyle{plain}
 \bibliography{ref}
 

@@ -7,44 +7,43 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {（一）}实验支撑环境}{2}}
 \@writefile{toc}{\contentsline {section}{\numberline {三、\nobreakspace {}}x86保护模式学习}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {（一）}使用选择子访存}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {（二）}分页机制}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {（三）}中断选择子}{2}}
-\@writefile{toc}{\contentsline {section}{\numberline {四、\nobreakspace {}}实验代码设计}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {（一）}从软盘到使用硬盘启动}{2}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}bochs硬盘配置参数}{2}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}make diskimg.sh}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {（二）}mbr.asm}{3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1}加载内核与用户程序}{3}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}Load\_progam}{3}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}read\_hard\_disk\_0}{4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2}安装GDT}{5}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}安装 gdt}{6}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.3}开启分页}{7}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}手动完善页目录和页表}{7}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}开启 paging}{7}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {（三）}core.asm}{8}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}安装idt}{8}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}安装 IDT}{8}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.2}初始化8259A}{10}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}初始化8259A}{10}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3}中断处理例程编写}{11}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}时钟中断处理}{11}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}键盘中断处理例程}{13}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}四个软中断例程}{14}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}stone\_v3}{15}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}simple print string}{18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {（四）}user.asm}{18}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.4.1}用户程序软中断调用}{18}}
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}user0 asm}{18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {（五）}疑难问题解决}{19}}
-\@writefile{toc}{\contentsline {section}{\numberline {五、\nobreakspace {}}实验结果及分析}{19}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces 软中断0x12\relax }}{19}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \relax }}{20}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \relax }}{20}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \relax }}{21}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \relax }}{21}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces \relax }}{22}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces \relax }}{22}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（二）}分页机制}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（三）}中断门}{3}}
+\@writefile{toc}{\contentsline {section}{\numberline {四、\nobreakspace {}}实验代码设计}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（一）}从软盘到使用硬盘启动}{4}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}bochs硬盘配置参数}{4}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}make diskimg.sh}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（二）}mbr.asm}{4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1}加载内核与用户程序}{4}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}Load\_progam}{4}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}read\_hard\_disk\_0}{5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2}安装GDT}{7}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}安装 gdt}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.3}开启分页}{8}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}手动完善页目录和页表}{8}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}开启 paging}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（三）}core.asm}{9}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}安装idt}{9}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}安装 IDT}{9}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.2}初始化8259A}{11}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}初始化8259A}{11}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3}中断处理例程编写}{12}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}时钟中断处理}{12}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}键盘中断处理例程}{14}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {12}四个软中断例程}{15}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {13}stone\_v3}{17}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}simple print string}{19}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {（四）}user.asm}{19}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.4.1}用户程序软中断调用}{19}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}user0 asm}{19}}
+\@writefile{toc}{\contentsline {section}{\numberline {五、\nobreakspace {}}实验结果及分析}{20}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces 软中断0x12，在左上角显示弹球\relax }}{20}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces 软中断0x13，在右上角显示弹球\relax }}{21}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces 软中断0x14，在右下角显示弹球\relax }}{21}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces 软中断0x11，此时第二行显示个人信息；同时主程序开始执行，显示一个白色的‘\#’号\relax }}{22}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces 主程序中的‘\#’号变成了棕色；并且可见右下角的转轮正常转动\relax }}{22}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces 按下键盘任意键，显示了ouch！\relax }}{23}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces 松开键盘，ouch消失；同时主程序的‘\#’继续反色，右下角的风火轮继续转动\relax }}{23}}
 \bibstyle{plain}
 \bibdata{ref}
-\@writefile{toc}{\contentsline {section}{\numberline {六、\nobreakspace {}}实验总结}{23}}
+\@writefile{toc}{\contentsline {section}{\numberline {六、\nobreakspace {}}实验总结}{24}}
