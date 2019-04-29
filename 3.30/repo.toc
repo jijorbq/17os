@@ -11,14 +11,15 @@
 \contentsline {section}{\numberline {四、\nobreakspace {}}实验代码设计}{2}
 \contentsline {subsection}{\numberline {（一）}从软盘到使用硬盘启动}{2}
 \contentsline {subsection}{\numberline {（二）}mbr.asm}{3}
-\contentsline {subsubsection}{\numberline {4.2.1}加载内核}{3}
+\contentsline {subsubsection}{\numberline {4.2.1}加载内核与用户程序}{3}
 \contentsline {subsubsection}{\numberline {4.2.2}安装GDT}{5}
-\contentsline {subsubsection}{\numberline {4.2.3}开启分页}{6}
-\contentsline {subsection}{\numberline {（三）}core.asm}{7}
-\contentsline {subsubsection}{\numberline {4.3.1}安装idt}{7}
-\contentsline {subsubsection}{\numberline {4.3.2}初始化8259A}{9}
-\contentsline {subsubsection}{\numberline {4.3.3}中断处理例程编写}{10}
-\contentsline {subsection}{\numberline {（四）}user.asm}{17}
-\contentsline {subsubsection}{\numberline {4.4.1}软中断调用}{17}
-\contentsline {subsection}{\numberline {（五）}疑难问题解决}{18}
-\contentsline {section}{\numberline {五、\nobreakspace {}}实验总结}{18}
+\contentsline {subsubsection}{\numberline {4.2.3}开启分页}{7}
+\contentsline {subsection}{\numberline {（三）}core.asm}{8}
+\contentsline {subsubsection}{\numberline {4.3.1}安装idt}{8}
+\contentsline {subsubsection}{\numberline {4.3.2}初始化8259A}{10}
+\contentsline {subsubsection}{\numberline {4.3.3}中断处理例程编写}{11}
+\contentsline {subsection}{\numberline {（四）}user.asm}{18}
+\contentsline {subsubsection}{\numberline {4.4.1}用户程序软中断调用}{18}
+\contentsline {subsection}{\numberline {（五）}疑难问题解决}{19}
+\contentsline {section}{\numberline {五、\nobreakspace {}}实验结果及分析}{19}
+\contentsline {section}{\numberline {六、\nobreakspace {}}实验总结}{23}

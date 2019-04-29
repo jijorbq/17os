@@ -186,7 +186,7 @@
 \cline{2-2}\\
 \xiaoerhao{\hei{姓\qquad 名}}& \sanhao{\hei{傅畅}}\\
 \cline{2-2}\\
-\xiaoerhao{\hei{实验名称}}& \sanhao{\hei{实验四（）}}\\
+\xiaoerhao{\hei{实验名称}}& \sanhao{\hei{实验四（异步事件编程）}}\\
 \cline{2-2}\\
 
 \end{tabular}
@@ -196,8 +196,8 @@
 \end{titlepage}
 \clearpage
 
-\centerline{\\[10pt]\erhao{\fs{实~验~一}}}
-\centerline{\\[10pt]\yihao{\fs{接~管~裸~机~控~制~权}}}
+\centerline{\\[10pt]\erhao{\fs{实~验~四}}}
+\centerline{\\[10pt]\yihao{\fs{异~步~事~件~编~程}}}
 
 \leftline{\\[8pt]\xiaosihao{\hei{\hspace{1.5em} 姓名：傅畅\hfill 学号：17341038 \hfill  }}}
 
@@ -236,8 +236,9 @@
 	 
 \section{x86保护模式学习}
 	\subsection{使用选择子访存}
-		
+	选择子在
 	\subsection{分页机制}
+
 	\subsection{中断选择子}
 
 	% \lstset{language=={[x86nasm]Assembler}}
@@ -256,7 +257,7 @@ ata0-master: type=disk, mode=flat, translation=auto, path="h.img", cylinders=2, 
 boot:disk	
 	\end{lstlisting}
 
-	为了方便地制作硬盘镜像，我编写了批处理写二进制文件的脚本，
+	为了方便地制作硬盘镜像，我编写了批处理写二进制文件的脚本。在linux下， 使用cat命令可以将二进制文件追加至指定文件末尾；至于‘0’字符可以由linux中的特殊0字符设备/dev/zero提供，即：从/dev/zero读取任意长度的都是0的字符，然后追加到指定文件末
 	\lstset{language=={[x86nasm]Assembler}}
 	\begin{lstlisting}[caption={make diskimg.sh},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 fil=h.img
@@ -273,10 +274,11 @@ dd if=/dev/zero count=$len bs=1 | cat>> $fil
 	\end{lstlisting}
 
 	\subsection{mbr.asm}
-		\subsubsection{加载内核}
+		\subsubsection{加载内核与用户程序}
 			\begin{enumerate}
-				\item 读取一个硬盘扇区,到目的物理地址
-				\item 根据内核程序头来确定
+				\item 这部分内容有两个程序，一个是读取一个硬盘扇区,到目的物理地址；
+				\item 另一个是根据程序程序头来确定程序长度并整个地读完程序。
+				\item 受别人代码的启发，我规定被加载程序头保留2个双字，分别表示目标程序长度与目标程序期望被加载的线性地址
 			\end{enumerate}
 
 			\lstset{language=={[x86nasm]Assembler}}
@@ -381,14 +383,13 @@ read_hard_disk_0:
 			
 		\subsubsection{安装GDT}
 			\begin{enumerate}
-				\item 代码段和栈段和选择子
-				
-
-				\item lgdt，sgdt, gdtr
+				\item 跳进保护模式前，需要手动配置代码段和栈段和选择子
+				\item 为了方便，我这次实验中只使用两个选择子，一个表示数据段，一个表示代码段，两者的段界限都是4GB。以后的ds，ss都使用同一选择子进行访存
+				\item 设置完毕之后需要使用lgdt，sgdt,命令直接保存或修改gdtr，然后打开控制寄存器cr0的PE位，开启保护模式
 			\end{enumerate}
 			
 \lstset{language=={[x86nasm]Assembler}}
-	\begin{lstlisting}[caption={make gdt},tabsize=4,basicstyle=\footnotesize,captionpos=b]
+	\begin{lstlisting}[caption={安装 gdt},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 		;计算GDT所在的逻辑段地址
 		mov eax,[cs:pgdt+0x02]             ;GDT的32位物理地址 
 		xor edx,edx
@@ -430,9 +431,9 @@ read_hard_disk_0:
 			
 		\subsubsection{开启分页}
 			\begin{enumerate}
-				\item 一张目录和一张页表
-				\item 初始恒等映射
-				\item 手动修改部分寄存器
+				\item 本次使用分页，我只是使用一张目录和一张页表，因为程序只使用到物理低端1MB的地址
+				\item 初始建立页表的时候，必须有恒等映射作为过渡，否则刚刚开启页表后的访存操作会由于对错误的线性地址操作而是失效
+				\item 同时手动修改部分寄存器，使其线性地址指向高端（物理地址不变）
 			\end{enumerate}
 \lstset{language=={[x86nasm]Assembler}}
 	\begin{lstlisting}[caption={手动完善页目录和页表},tabsize=4,basicstyle=\footnotesize,captionpos=b]
@@ -445,7 +446,7 @@ read_hard_disk_0:
 		;在页目录内创建指向页目录表自己的目录项
 		mov dword [ebx+4092],0x00020003 
 
-		mov edx,0x00021003                 ;MBR空间有限，后面尽量不使用立即数
+		mov edx,0x00021003                 
 		;在页目录内创建与线性地址0x00000000对应的目录项
 		mov [ebx+0x000],edx                ;写入目录项（页表的物理地址和属性）      
 										   ;此目录项仅用于过渡。
@@ -466,8 +467,9 @@ read_hard_disk_0:
 		jl .b1
 	\end{lstlisting}
 
+	安装号页目录和页表之后，修改cr3和cr0寄存器就可以正式开启分页了
 \lstset{language=={[x86nasm]Assembler}}
-	\begin{lstlisting}[caption={start paging},tabsize=4,basicstyle=\footnotesize,captionpos=b]
+	\begin{lstlisting}[caption={开启 paging},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 		;令CR3寄存器指向页目录，并正式开启页功能 
 		mov eax,0x00020000                 ;PCD=PWT=0
 		mov cr3,eax
@@ -492,7 +494,16 @@ read_hard_disk_0:
 % 	\end{lstlisting}
 
 	\subsection{core.asm}
+	core是内核代码段，主要负责中断处理的配置并跳转到用户程序，其内容包括
+	\begin{enumerate}
+		\item 安装IDT，包括键盘、时钟中断和4个软中断
+		\item 初始化8259A芯片，包括其中的我重点使用的时钟中断硬件RTC
+		\item 编写中断处理例程
+	\end{enumerate}
+	
 		\subsubsection{安装idt}
+		本次中断我都使用中断门来实现，特权级都设为0。\\
+		\indent 除了实验要求的6个中断，其余250个中断（包括异常中断处理）我都设置为空处理的例程。
 		\lstset{language=={[x86nasm]Assembler}}
 	\begin{lstlisting}[caption={安装 IDT},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 		mov eax,general_exception_handler  ;门代码在段内偏移地址
@@ -631,6 +642,9 @@ read_hard_disk_0:
 	\end{lstlisting}
 
 		\subsubsection{中断处理例程编写}
+		时钟中断处理过程，我先向8259A发送End Of Interrupt信号并读取寄存器C之后，便可以执行其他代码了。\\
+		\indent 整个处理程序除了按中断显示风火轮，还重新显示当前的时间；后者只需要向0x70端口发送0x80,0x82, 0x84就可以从0x71读取秒、分、时了。\\
+		\indent 向0xb8000写入输出信息，只需要利用平坦4gb选择子即可直接写入。
 		\lstset{language=={[x86nasm]Assembler}}
 	\begin{lstlisting}[caption={时钟中断处理},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 		rtm_0x70_interrupt_handle:                  ;实时时钟中断处理过程
@@ -725,7 +739,7 @@ read_hard_disk_0:
 
 
 	\end{lstlisting}
-
+	\indent 键盘中断显示的Ouch!和时钟中断类似，同样需要记得读取端口以清空阻塞并发送EOI
 \lstset{language=={[x86nasm]Assembler}}
 	\begin{lstlisting}[caption={键盘中断处理例程},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 		keyboard_interrupt_handle:         ;键盘中断处理例程
@@ -756,7 +770,7 @@ mov [VideoSite+2006], cx
 popad
 iretd
 	\end{lstlisting}
-
+	接下来就是要实现四个软中断例程。第一个我用于显示一个个人信息的字符串；第二个到第四个我用于执行实验一中的弹跳小球，只不过通过修改左上框的基地址分别在三个象限各执行一段时间，然后结束。
 \lstset{language=={[x86nasm]Assembler}}
 	\begin{lstlisting}[caption={四个软中断例程},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 personal1_interrupt_handle:               ; 第一个自定义中断例程， 放在0x11处， 用于显示
@@ -789,7 +803,7 @@ personal2_interrupt_handle:               ; 第二个中断历程，在程序起
 	add esp, 8
 	pop eax
 	iretd
-	personal3_interrupt_handle:               ;中断例程3 4 同2，改换基地址再运行几次
+personal3_interrupt_handle:               ;中断例程3 4 同2，改换基地址再运行几次
 	push eax
 	mov al, 0x20
 	out 0xa0, al
@@ -815,7 +829,7 @@ personal4_interrupt_handle:
 	iretd
 ;---------------
 \end{lstlisting}
-
+其中的block\_stone代码如下
 \lstset{language=={[x86nasm]Assembler}}
 \begin{lstlisting}[caption={stone\_v3},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 	block_stone:
@@ -922,6 +936,7 @@ personal4_interrupt_handle:
 	popad
 	retf
 	\end{lstlisting}
+中断处理程序1中的简单字符串输出程序如下
 \lstset{language=={[x86nasm]Assembler}}
 	\begin{lstlisting}[caption={simple print string},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 simple_puts:
@@ -951,7 +966,7 @@ retf
 	\end{lstlisting}
 
 	\subsection{user.asm}
-		\subsubsection{软中断调用}
+		\subsubsection{用户程序软中断调用}
 		\lstset{language=={[x86nasm]Assembler}}
 	\begin{lstlisting}[caption={user0 asm},tabsize=4,basicstyle=\footnotesize,captionpos=b]
 [bits 32]
@@ -1001,6 +1016,46 @@ user0_end:
 	\end{itemize}
 
 
+\section{实验结果及分析}
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=15cm]{expr_image/1.png}
+		\bottomcaption{软中断0x12}
+	\end{figure}
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=15cm]{expr_image/2.png}
+		\bottomcaption{}
+	\end{figure}
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=15cm]{expr_image/3.png}
+		\bottomcaption{}
+	\end{figure}
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=15cm]{expr_image/DeepinScrot-5338.png}
+		\bottomcaption{}
+	\end{figure}
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=15cm]{expr_image/DeepinScrot-5455.png}
+		\bottomcaption{}
+	\end{figure}
+
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=15cm]{expr_image/4.png}
+		\bottomcaption{}
+	\end{figure}
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=15cm]{expr_image/DeepinScrot-5546.png}
+		\bottomcaption{}
+	\end{figure}
 \section{实验总结}
 
 \bibliographystyle{plain}

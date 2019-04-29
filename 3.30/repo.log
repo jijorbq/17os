@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017) (preloaded format=xelatex 2018.5.10)  28 APR 2019 16:56
+This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017) (preloaded format=xelatex 2018.5.10)  29 APR 2019 10:07
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1819,20 +1819,34 @@ LaTeX Font Warning: Font shape `TU/FandolKai-Regular(0)/bx/n' undefined
 
 [2
 
-] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
+] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18]
+File: expr_image/1.png Graphic file (type QTm)
+ <use  "expr_image/1.png" >
+File: expr_image/2.png Graphic file (type QTm)
+ <use  "expr_image/2.png" >
+File: expr_image/3.png Graphic file (type QTm)
+ <use  "expr_image/3.png" >
+File: expr_image/DeepinScrot-5338.png Graphic file (type QTm)
+ <use  "expr_image/DeepinScrot-5338.png" >
+File: expr_image/DeepinScrot-5455.png Graphic file (type QTm)
+ <use  "expr_image/DeepinScrot-5455.png" >
+File: expr_image/4.png Graphic file (type QTm)
+ <use  "expr_image/4.png" >
+File: expr_image/DeepinScrot-5546.png Graphic file (type QTm)
+ <use  "expr_image/DeepinScrot-5546.png" > [19] [20] [21] [22]
 No file repo.bbl.
-[18] (./repo.aux)
+[23] (./repo.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 26572 strings out of 493005
- 523667 string characters out of 6134596
- 781878 words of memory out of 5000000
- 30182 multiletter control sequences out of 15000+600000
+ 26607 strings out of 493005
+ 525019 string characters out of 6134596
+ 776878 words of memory out of 5000000
+ 30206 multiletter control sequences out of 15000+600000
  11061 words of font info for 102 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  57i,8n,79p,10476b,1590s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on repo.pdf (19 pages).
+Output written on repo.pdf (24 pages).
