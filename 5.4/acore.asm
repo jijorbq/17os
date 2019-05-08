@@ -5,6 +5,9 @@
          User0Start                equ 0x80040508
 global simple_puts
 global _start
+global In
+global Out
+global roll_screen
 extern cmain
                      [bits 32]
 _start:
@@ -60,7 +63,19 @@ In:
 
 roll_screen:
 		pushad
-		
+
+		cld
+		mov esi, VideoSite+0xa0
+		mov edi, VideoSite
+		mov ecx, 1920
+		rep movsd
+		mov bx, 3840
+		mov ecx, 80
+	.cls:
+		mov word [VideoSite+ebx], 0x0720
+		add bx, 2
+		loop .cls
+
 		popad
 		ret
        
