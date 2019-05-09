@@ -1,13 +1,14 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
+typedef unsigned long long u64;
 #define BUFLEN 20
 
 typedef struct{
 	int a,b,c;	
 } StructTest;
 
-extern void simple_puts(u8 *s, u32 color_site);
+extern void simple_puts(u8 *s, u64 color_site);
 extern void cmain();
 extern void roll_screen();
 
@@ -19,9 +20,10 @@ StructTest StructFunc(StructTest x, StructTest y){
 void cmain(){
 	StructTest c= StructFunc(a,b);
 	
-	simple_puts("Hello world!",7);
+	u64 tmp = (1ll<<33)+7;
+	simple_puts("Hello world!",tmp);
 	simple_puts("I'm from C language",(1*80+0<<16)+6);
-	for (int i=0; ; ++i)
+	for (int i=0;i<3; ++i)
 		putchar('A'+i%26);
 	return ;
 }

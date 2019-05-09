@@ -61,64 +61,64 @@ SECTION  mbr  vstart=0x00007c00
          mov esp,0x7000                     ;堆栈指针
          
          ;以下加载系统核心程序
-		 mov eax, core_length_sector
-		 push eax
-         mov eax ,core_base_address
-         push eax
-       mov eax, core_start_sector
-       push eax
-       call Load_program
-       add esp ,0xc
+              mov eax, core_length_sector
+              push eax
+              mov eax ,core_base_address
+              push eax
+              mov eax, core_start_sector
+              push eax
+              call Load_program
+              add esp ,0xc
         
-   pge:
-         ;准备打开分页机制.
+;    pge:
+;          ;准备打开分页机制.
               
-         ;创建系统内核的页目录表PDT
-         mov ebx,0x00020000                 ;页目录表PDT的物理地址
+;          ;创建系统内核的页目录表PDT
+;          mov ebx,0x00020000                 ;页目录表PDT的物理地址
          
-         ;在页目录内创建指向页目录表自己的目录项
-         mov dword [ebx+4092],0x00020003 
+;          ;在页目录内创建指向页目录表自己的目录项
+;          mov dword [ebx+4092],0x00020003 
 
-         mov edx,0x00021003                 ;MBR空间有限，后面尽量不使用立即数
-         ;在页目录内创建与线性地址0x00000000对应的目录项
-         mov [ebx+0x000],edx                ;写入目录项（页表的物理地址和属性）      
-                                            ;此目录项仅用于过渡。
-         ;在页目录内创建与线性地址0x80000000对应的目录项
-         mov [ebx+0x800],edx                ;写入目录项（页表的物理地址和属性）
+;          mov edx,0x00021003                 ;MBR空间有限，后面尽量不使用立即数
+;          ;在页目录内创建与线性地址0x00000000对应的目录项
+;          mov [ebx+0x000],edx                ;写入目录项（页表的物理地址和属性）      
+;                                             ;此目录项仅用于过渡。
+;          ;在页目录内创建与线性地址0x80000000对应的目录项
+;          mov [ebx+0x800],edx                ;写入目录项（页表的物理地址和属性）
 
-         ;创建与上面那个目录项相对应的页表，初始化页表项 
-         mov ebx,0x00021000                 ;页表的物理地址
-         xor eax,eax                        ;起始页的物理地址 
-         xor esi,esi
-  .b1:       
-         mov edx,eax
-         or edx,0x00000003                                                      
-         mov [ebx+esi*4],edx                ;登记页的物理地址
-         add eax,0x1000                     ;下一个相邻页的物理地址 
-         inc esi
-         cmp esi,256                        ;仅低端1MB内存对应的页才是有效的 
-         jl .b1
+;          ;创建与上面那个目录项相对应的页表，初始化页表项 
+;          mov ebx,0x00021000                 ;页表的物理地址
+;          xor eax,eax                        ;起始页的物理地址 
+;          xor esi,esi
+;   .b1:       
+;          mov edx,eax
+;          or edx,0x00000003                                                      
+;          mov [ebx+esi*4],edx                ;登记页的物理地址
+;          add eax,0x1000                     ;下一个相邻页的物理地址 
+;          inc esi
+;          cmp esi,256                        ;仅低端1MB内存对应的页才是有效的 
+;          jl .b1
          
-         ;令CR3寄存器指向页目录，并正式开启页功能 
-         mov eax,0x00020000                 ;PCD=PWT=0
-         mov cr3,eax
+;          ;令CR3寄存器指向页目录，并正式开启页功能 
+;          mov eax,0x00020000                 ;PCD=PWT=0
+;          mov cr3,eax
 
-         ;将GDT的线性地址映射到从0x80000000开始的相同位置 
-         sgdt [pgdt]
-         mov ebx,[pgdt+2]
-         add dword [pgdt+2],0x80000000      ;GDTR也用的是线性地址
-         lgdt [pgdt]
+;          ;将GDT的线性地址映射到从0x80000000开始的相同位置 
+;          sgdt [pgdt]
+;          mov ebx,[pgdt+2]
+;          add dword [pgdt+2],0x80000000      ;GDTR也用的是线性地址
+;          lgdt [pgdt]
 
-         mov eax,cr0
-         or eax,0x80000000
-         mov cr0,eax                        ;开启分页机制
+;          mov eax,cr0
+;          or eax,0x80000000
+;          mov cr0,eax                        ;开启分页机制
    
-         ;将堆栈映射到高端，这是非常容易被忽略的一件事。应当把内核的所有东西
-         ;都移到高端，否则，一定会和正在加载的用户任务局部空间里的内容冲突，
-         ;而且很难想到问题会出在这里。 
-         add esp,0x80000000                 
+;          ;将堆栈映射到高端，这是非常容易被忽略的一件事。应当把内核的所有东西
+;          ;都移到高端，否则，一定会和正在加载的用户任务局部空间里的内容冲突，
+;          ;而且很难想到问题会出在这里。 
+;          add esp,0x80000000                 
                                              
-         jmp 0x80040000
+         jmp 0x40000
        
 ;-------------------------------------------------------------------------------
 read_hard_disk_0:                           ;从硬盘读取一个逻辑扇区

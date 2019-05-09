@@ -7,7 +7,7 @@ read_hard_disk_0:                           ;从硬盘读取一个逻辑扇区
                                             ;返回：EBX=EBX+512 
 											;5.7修改为void read_hard_disk_0(int Section, u32 ds:start site)
          push eax 
-		 push ebx
+         push ebx
          push ecx
          push edx
 

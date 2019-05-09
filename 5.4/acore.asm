@@ -1,8 +1,12 @@
          flat_4gb_code_seg_sel  equ  0x0008      ;4GB代码段选择子 
          flat_4gb_data_seg_sel  equ  0x0018      ;4GB数据段选择子 
-         idt_linear_address     equ  0x8001f000  ;IDT线性基地址 
-         VideoSite                equ 0x800b8000
-         User0Start                equ 0x80040508
+       ;   idt_linear_address     equ  0x8001f000  ;IDT线性基地址 
+       ;   VideoSite                equ 0x800b8000
+       ;   User0Start                equ 0x80040508
+         idt_linear_address     equ  0x0001f000  ;IDT线性基地址 
+         VideoSite                equ 0x000b8000
+         User0Start                equ 0x00040508
+
 global simple_puts
 global _start
 global In
@@ -21,7 +25,7 @@ simple_puts:
        pushad               ; 简单的输出字符串，不涉及光标移动
                             ; arg1 is string pointer
                             ; arg2 的低16位表示颜色，高16为表示显示的启示位置，即x*80+y (col,xy)
-							; simple_puts(string pointer , color_and_site)
+				; simple_puts(string pointer , color_and_site)
                             ; C function call is near call, only push cs
        mov ebx , [esp+0x28] ;from 44
        xor eax , eax
