@@ -14,37 +14,38 @@ global Out
 global roll_screen
 extern c_rtm_0x70_interrupt_handle
 extern Init8259A
+extern putnum
 extern cmain
 extern c_block_stone
                      [bits 32]
 _start:
-              call cmain
+            call cmain
 			mov eax , 0
 			push eax
 			push eax
 			call c_block_stone
 
-              mov eax, general_exeption_handler
-              mov bx, flat_4gb_code_seg_sel
-              mov cx, 0x8e00
-              call flat_4gb_code_seg_sel:make_gate_descriptor
+			mov eax, general_exeption_handler
+			mov bx, flat_4gb_code_seg_sel
+			mov cx, 0x8e00
+			call flat_4gb_code_seg_sel:make_gate_descriptor
 
-              mov ebx, idt_linear_address
-              xor esi, esi
+			mov ebx, idt_linear_address
+			xor esi, esi
        
        .idt0:
-              mov [ebx+esi*8], eax
-              mov [ebx+esi*8+4], edx
-              inc esi
-              cmp esi, 19
-              jle .idt0
+			mov [ebx+esi*8], eax
+			mov [ebx+esi*8+4], edx
+			inc esi
+			cmp esi, 19
+			jle .idt0
 
-              mov eax, general_interrupt_handler
-              mov bx, flat_4gb_code_seg_sel
-              mov cx, 0x8e00
-              call flat_4gb_code_seg_sel:make_gate_descriptor
+			mov eax, general_interrupt_handler
+			mov bx, flat_4gb_code_seg_sel
+			mov cx, 0x8e00
+			call flat_4gb_code_seg_sel:make_gate_descriptor
 
-              mov ebx, idt_linear_address
+			mov ebx, idt_linear_address
        .idt1:
               mov [ebx+esi*8] , eax
               mov [ebx+esi*8+4] , edx
@@ -61,6 +62,16 @@ _start:
               mov ebx, idt_linear_address
               mov [ebx+0x70*8], eax
               mov [ebx+0x70*8+4], edx
+
+			  ; set keyboard inter
+			  mov eax, keyboard_interrupt_handle
+			  mov bx, flat_4gb_code_seg_sel
+			  mov cx, 0x8e00
+			  call flat_4gb_code_seg_sel:make_gate_descriptor
+
+			  mov ebx, idt_linear_address
+			  mov [ebx+0x21*8], eax
+			  mov [ebx+0x21*8+4], edx
 
 			  mov word[pidt] , 256*8-1
 			  mov dword[pidt+2] , idt_linear_address
@@ -101,6 +112,32 @@ general_interrupt_handler:
 		pop eax
 
 		iretd
+sys_call_handler: 
+									;5 system calls available
+		cmp al, 0					;0  putchar , cl=char
+		jne	.endhandle0
+
+	.endhandle0:
+
+		cmp al, 1					;1	getchar , return al=getchar()
+		jne	.endhandle1
+		
+	.endhandle1:
+		cmp al, 2					;2	simple_puts , ebx=*str  , ecx=pos<<16+col
+		jne	.endhandle2
+		
+	.endhandle2:
+		cmp al, 3					;3  clock() return eax= hour*60*60+min*60+second
+		jne	.endhandle3
+		
+	.endhandle3:
+
+		cmp al, 4					;4	clear screen()
+		jne	.endhandle4
+		
+	.endhandle4:
+		iretd
+
 rtm_0x70_interrupt_handle:
 		push eax
 		 mov al,0x20                        ;中断结束命令EOI
@@ -113,6 +150,22 @@ rtm_0x70_interrupt_handle:
                                             ;此处不考虑闹钟和周期性中断的情况
 		pop eax
 		call c_rtm_0x70_interrupt_handle
+		iretd
+
+keyboard_interrupt_handle:
+		pushad
+		mov al, 0x20
+		out 0xa0, al
+		out 0x20, al
+
+		xor eax, eax
+		in al, 0x60
+		push eax
+		call flush_to_keyb
+		pop eax
+
+
+		popad
 		iretd
 ;-------------------------------------------------------------------------------
 ;following function for C
@@ -182,6 +235,7 @@ roll_screen:
 					dd 0
 		pgdt		dw 0
 					dd 0
+		
 ;-------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------

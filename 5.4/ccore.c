@@ -3,7 +3,7 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long long u64;
 #define BUFLEN 20
-
+#include "keymp.h"
 typedef struct{
 	int a,b,c;	
 } StructTest;
@@ -21,6 +21,14 @@ char buf[BUFLEN+1];
 // StructTest StructFunc(StructTest x, StructTest y){
 // 	return (StructTest){x.a-y.a, x.b>y.b ? x.b: y.b , x.c*y.c};
 // }
+//------------------------------------------------------------------
+// STL
+void reverse(u8 *fro, u8 *rea){
+	u8 t;
+	while ( fro < rea){
+		t=*fro; *(fro++) = *(--rea); *rea=t;
+	}
+}
 void cmain(){
 	// StructTest c= StructFunc(a,b);
 	
@@ -29,6 +37,9 @@ void cmain(){
 	simple_puts("I'm from C language",(1*80+0<<16)+6);
 	return ;
 }
+//------------------------------------------------------------------
+// stdio
+
 void putchar(u8 c){
 	Out(0x3d4, 0x0e);
 	int pos=In(0x3d5)<<8;
@@ -47,7 +58,14 @@ void putchar(u8 c){
 	Out(0x3d5, pos&255);
 	return ;
 }
-
+void putnum(u32 num){
+	int len=0;u8 *_buf=buf+10;
+	for (;num; num/=10) _buf[len++] = num%10+'0';
+	if (len==0) _buf[len++]='0';
+	reverse(buf, buf+len);
+	_buf[len++] = ' '; _buf[len]=0;
+	for (int i=0; i<len; ++i) putchar(_buf[i]);
+}
 void Init8259A(){
 	Out(0x20, 0x11);	Out(0x21, 0x20);
 	Out(0x21, 0x04);	Out(0x21, 0x01);
@@ -62,7 +80,19 @@ void Init8259A(){
 
 	Out(0x70, 0x0c); In(0x71);
 }
-
+void flush_to_keyb(u8 keyval){
+	u8 ch=0;
+	for (int i=0; i<KEYNUMS; ++i)
+		if ( keyval == keymp[3*i+1])ch=keymp[3*i];
+	keybuf=ch; boolkeybuf=1;
+}
+u8 getchar(){
+	while (!boolkeybuf);
+	boolkeybuf=0;
+	return keybuf;
+}
+//------------------------------------------------------------------
+//cycle
 const char message_cyc[4]="\\|/-";
 int curcyc=0;
 void c_rtm_0x70_interrupt_handle(){
@@ -75,14 +105,17 @@ void c_rtm_0x70_interrupt_handle(){
 
 }
 
+
+//------------------------------------------------------------------
+// strone_block
 const int dx[4]={1, 1, -1,-1}, dy[4]={1,-1,1,-1}, Limx=12, Limy=40;
 int curx, cury=0,curd=0;
 void c_block_stone(u32 BaseX, u32 BaseY){
 	curx=0;cury=0;
-	while (1){
+	for (int i=0; i<100; ++i){
 		buf[0] = '*'; buf[1]=0;
 		simple_puts(buf, ((curx+BaseX)*80+cury+BaseY<<16)+0x5);
-		for (int delay=1000000; delay--;);
+		for (int delay=10000; delay--;);
 
 		int nx=curx+dx[curd], ny=cury+dy[curd];
 		if ( nx<0 || nx>=Limx) curd^=2;
