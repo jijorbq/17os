@@ -12,13 +12,108 @@ global _start
 global In
 global Out
 global roll_screen
+extern c_rtm_0x70_interrupt_handle
+extern Init8259A
 extern cmain
+extern c_block_stone
                      [bits 32]
 _start:
-	call flat_4gb_code_seg_sel:cmain
+              call cmain
+			mov eax , 0
+			push eax
+			push eax
+			call c_block_stone
+
+              mov eax, general_exeption_handler
+              mov bx, flat_4gb_code_seg_sel
+              mov cx, 0x8e00
+              call flat_4gb_code_seg_sel:make_gate_descriptor
+
+              mov ebx, idt_linear_address
+              xor esi, esi
+       
+       .idt0:
+              mov [ebx+esi*8], eax
+              mov [ebx+esi*8+4], edx
+              inc esi
+              cmp esi, 19
+              jle .idt0
+
+              mov eax, general_interrupt_handler
+              mov bx, flat_4gb_code_seg_sel
+              mov cx, 0x8e00
+              call flat_4gb_code_seg_sel:make_gate_descriptor
+
+              mov ebx, idt_linear_address
+       .idt1:
+              mov [ebx+esi*8] , eax
+              mov [ebx+esi*8+4] , edx
+              inc esi
+              cmp esi , 255
+              jle .idt1
+       
+              ; set clock interrupt
+              mov eax, rtm_0x70_interrupt_handle
+              mov bx, flat_4gb_code_seg_sel
+              mov cx, 0x8e00
+              call flat_4gb_code_seg_sel:make_gate_descriptor
+
+              mov ebx, idt_linear_address
+              mov [ebx+0x70*8], eax
+              mov [ebx+0x70*8+4], edx
+
+			  mov word[pidt] , 256*8-1
+			  mov dword[pidt+2] , idt_linear_address
+			  lidt [pidt]
+
+              call Init8259A
+              sti
+
+			  int 0x70
+
 	jmp $
 ;-------------------------------------------------------------------------------
+make_gate_descriptor:
+		push ebx
+		push ecx
+		
+		mov edx, eax
+		and edx, 0xffff0000
+		or dx, cx
 
+		and eax, 0x0000ffff
+		shl ebx, 16
+		or eax, ebx
+
+		pop ecx
+		pop ebx
+		retf
+
+general_exeption_handler:
+		hlt
+general_interrupt_handler:
+		push eax
+
+		mov al, 0x20		;EOI
+		out 0xa0,al
+		out 0x20, al
+
+		pop eax
+
+		iretd
+rtm_0x70_interrupt_handle:
+		push eax
+		 mov al,0x20                        ;中断结束命令EOI
+         out 0xa0,al                        ;向8259A从片发送
+         out 0x20,al                        ;向8259A主片发送
+
+         mov al,0x0c                        ;寄存器C的索引。且开放NMI
+         out 0x70,al
+         in al,0x71                         ;读一下RTC的寄存器C，否则只发生一次中断
+                                            ;此处不考虑闹钟和周期性中断的情况
+		pop eax
+		call c_rtm_0x70_interrupt_handle
+		iretd
 ;-------------------------------------------------------------------------------
 ;following function for C
 simple_puts:
@@ -82,4 +177,12 @@ roll_screen:
 
 		popad
 		ret
-       
+;-------------------------------------------------------------------------------
+		pidt 		dw 0
+					dd 0
+		pgdt		dw 0
+					dd 0
+;-------------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
+;-------------------------------------------------------------------------------
