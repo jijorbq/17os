@@ -1,10 +1,11 @@
 
          core_base_address equ 0x00040000   ;常数，内核加载的起始内存地址 
          core_start_sector equ 0x00000001   ;常数，内核的起始逻辑扇区号 
-		 core_length_sector equ 0x9
+	  core_length_sector equ 0x10
          
-        ;  user0_base_address equ 0x00040500   ;常数，用户程序加载的起始内存地址 
-        ;  user0_start_sector equ 0x0000000a   ;常数，用户程序的起始逻辑扇区号 
+         user0_base_address equ 0x0045000   ;常数，用户程序加载的起始内存地址 
+         user0_start_sector equ 50   ;常数，用户程序的起始逻辑扇区号 
+         user0_length_sector equ 0x10
 
 SECTION  mbr  vstart=0x00007c00         
 
@@ -66,6 +67,15 @@ SECTION  mbr  vstart=0x00007c00
               mov eax ,core_base_address
               push eax
               mov eax, core_start_sector
+              push eax
+              call Load_program
+              add esp ,0xc
+       ;以下加载用户程序
+              mov eax, user0_length_sector
+              push eax
+              mov eax ,user0_base_address
+              push eax
+              mov eax, user0_start_sector
               push eax
               call Load_program
               add esp ,0xc

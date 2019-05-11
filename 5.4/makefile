@@ -6,6 +6,7 @@
 # 	nasm -f elf a1.asm -o a1.o
 all:
 	nasm mbr.asm -f bin -o mbr.bin
+	nasm user0.asm -f bin -o user0.bin
 	gcc -m32 -Og -c ccore.c -o ccore.o -fno-PIC -fno-builtin -nostdinc -fno-stack-protector
 	nasm -f elf -g -F stabs  acore.asm -o acore.o
 #	gcc -o fd0  -m32 a.o c.o

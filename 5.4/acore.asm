@@ -5,7 +5,7 @@
        ;   User0Start                equ 0x80040508
          idt_linear_address     equ  0x0001f000  ;IDT线性基地址 
          VideoSite                equ 0x000b8000
-         User0Start                equ 0x00040508
+		 user0_base_address equ 0x0045000   ;常数，用户程序加载的起始内存地址 
 
 global simple_puts
 global _start
@@ -95,17 +95,22 @@ _start:
               sti
 
 			  call cmain
+			mov al, 0x01
+			int 0x11
+			mov cl, al
+			mov al, 0x0
+			int 0x11
+		hlt
 			mov al, 0x4
 			int 0x11
 			 mov ebx, selfMessage
 			 mov ecx, 0xf00003
 			 mov al, 2
 			 int 0x11
+			
 
-			 
 
-
-	jmp $
+			jmp user0_base_address
 ;-------------------------------------------------------------------------------
 make_gate_descriptor:
 		push ebx
@@ -148,7 +153,9 @@ sys_call_handler:
 		cmp al, 1					;1	getchar , return al=getchar()
 		jne	.endhandle1
 		xor eax, eax
+		sti							; ??? must be open to let keyboard handle to flush the keybuf
 		call getchar
+		cli
 		jmp .endsyscall
 		
 	.endhandle1:
@@ -177,14 +184,14 @@ sys_call_handler:
 
 rtm_0x70_interrupt_handle:
 		push eax
-		 mov al,0x20                        ;中断结束命令EOI
-         out 0xa0,al                        ;向8259A从片发送
-         out 0x20,al                        ;向8259A主片发送
+		mov al,0x20                        ;中断结束命令EOI
+		out 0xa0,al                        ;向8259A从片发送
+		out 0x20,al                        ;向8259A主片发送
 
-         mov al,0x0c                        ;寄存器C的索引。且开放NMI
-         out 0x70,al
-         in al,0x71                         ;读一下RTC的寄存器C，否则只发生一次中断
-                                            ;此处不考虑闹钟和周期性中断的情况
+		mov al,0x0c                        ;寄存器C的索引。且开放NMI
+		out 0x70,al
+		in al,0x71                         ;读一下RTC的寄存器C，否则只发生一次中断
+										;此处不考虑闹钟和周期性中断的情况
 		pop eax
 		call c_rtm_0x70_interrupt_handle
 		iretd
