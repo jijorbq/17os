@@ -29,13 +29,13 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0x7f22b1d9f010. after alignment, vector=0x7f22b1da0000
+00000000000i[MEM0 ] allocated memory at 0x7fa931a75010. after alignment, vector=0x7fa931a76000
 00000000000i[MEM0 ] 128.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=128
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/gdb/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/41472 ('/usr/local/share/bochs/gdb/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Mon Apr 29 09:52:50 2019 (time0=1556502770)
+00000000000i[CMOS ] Setting initial clock to: Fri May 10 23:08:26 2019 (time0=1557500906)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] tried to open 'fd0' read/write: No such file or directory
@@ -102,41 +102,41 @@
 00000000000i[     ] reset of 'parallel' plugin device by virtual method
 00000000000i[XGUI ] [x] Mouse off
 00000004662i[BIOS ] $Revision: 13073 $ $Date: 2017-02-16 22:43:52 +0100 (Do, 16. Feb 2017) $
-00000318065i[KBD  ] reset-disable command received
-00000320796i[BIOS ] Starting rombios32
-00000321234i[BIOS ] Shutdown flag 0
-00000321817i[BIOS ] ram_size=0x08000000
-00000322260i[BIOS ] ram_end=128MB
-00000362774i[BIOS ] Found 1 cpu(s)
-00000376358i[BIOS ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
-00000394815i[BIOS ] bios_table_cur_addr: 0x000f9cd8
-00000522432i[VBIOS] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
-00000522503i[VGA  ] VBE known Display Interface b0c0
-00000522535i[VGA  ] VBE known Display Interface b0c5
-00000525460i[VBIOS] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
+00000318050i[KBD  ] reset-disable command received
+00000320819i[BIOS ] Starting rombios32
+00000321257i[BIOS ] Shutdown flag 0
+00000321840i[BIOS ] ram_size=0x08000000
+00000322283i[BIOS ] ram_end=128MB
+00000362827i[BIOS ] Found 1 cpu(s)
+00000376411i[BIOS ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
+00000394868i[BIOS ] bios_table_cur_addr: 0x000f9cd8
+00000522485i[VBIOS] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
+00000522556i[VGA  ] VBE known Display Interface b0c0
+00000522588i[VGA  ] VBE known Display Interface b0c5
+00000525513i[VBIOS] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
 00000600000i[XGUI ] charmap update. Font Height is 16
-00000869666i[BIOS ] ata0-0: PCHS=2/16/64 translation=large LCHS=2/16/64
-00004316728i[BIOS ] IDE time out
-00016286282i[BIOS ] Booting from 0000:7c00
+00000869719i[BIOS ] ata0-0: PCHS=2/16/64 translation=large LCHS=2/16/64
+00004316781i[BIOS ] IDE time out
+00016286283i[BIOS ] Booting from 0000:7c00
 00016400000i[XGUI ] charmap update. Font Height is 16
-00881262442i[     ] dbg: Quit
-00881262442i[CPU0 ] CPU is in protected mode (active)
-00881262442i[CPU0 ] CS.d_b = 32 bit
-00881262442i[CPU0 ] SS.d_b = 32 bit
-00881262442i[CPU0 ] | EAX=00080100  EBX=800b8004  ECX=00090723  EDX=80048e00
-00881262442i[CPU0 ] | ESP=80007000  EBP=00000000  ESI=00000100  EDI=0000ffac
-00881262442i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
-00881262442i[CPU0 ] | SEG selector     base    limit G D
-00881262442i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00881262442i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00881262442i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00881262442i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00881262442i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00881262442i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00881262442i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00881262442i[CPU0 ] | EIP=8004051c (8004051c)
-00881262442i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
-00881262442i[CPU0 ] | CR3=0x00020000 CR4=0x00000000
-00881262442i[CMOS ] Last time is 1556502990 (Mon Apr 29 09:56:30 2019)
-00881262442i[XGUI ] Exit
-00881262442i[CTRL ] quit_sim called with exit code 0
+00325183011i[     ] dbg: Quit
+00325183011i[CPU0 ] CPU is in protected mode (active)
+00325183011i[CPU0 ] CS.d_b = 32 bit
+00325183011i[CPU0 ] SS.d_b = 32 bit
+00325183011i[CPU0 ] | EAX=00080100  EBX=800b8004  ECX=00090723  EDX=80048e00
+00325183011i[CPU0 ] | ESP=80007000  EBP=00000000  ESI=00000100  EDI=0000ffac
+00325183011i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
+00325183011i[CPU0 ] | SEG selector     base    limit G D
+00325183011i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00325183011i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00325183011i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00325183011i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00325183011i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00325183011i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00325183011i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00325183011i[CPU0 ] | EIP=80040519 (80040519)
+00325183011i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
+00325183011i[CPU0 ] | CR3=0x00020000 CR4=0x00000000
+00325183011i[CMOS ] Last time is 1557500987 (Fri May 10 23:09:47 2019)
+00325183011i[XGUI ] Exit
+00325183011i[CTRL ] quit_sim called with exit code 0

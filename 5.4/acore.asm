@@ -15,15 +15,19 @@ global roll_screen
 extern c_rtm_0x70_interrupt_handle
 extern Init8259A
 extern putnum
+extern putchar
+extern getchar
 extern cmain
 extern c_block_stone
+extern flush_to_keyb
+extern curr_clock
                      [bits 32]
 _start:
-            call cmain
 			mov eax , 0
 			push eax
 			push eax
 			call c_block_stone
+			add esp ,8
 
 			mov eax, general_exeption_handler
 			mov bx, flat_4gb_code_seg_sel
@@ -73,6 +77,16 @@ _start:
 			  mov [ebx+0x21*8], eax
 			  mov [ebx+0x21*8+4], edx
 
+			  ; set syscall 
+			  mov eax, sys_call_handler
+			  mov bx, flat_4gb_code_seg_sel
+			  mov cx, 0x8e00
+			  call flat_4gb_code_seg_sel:make_gate_descriptor
+
+			  mov ebx, idt_linear_address
+			  mov[ ebx+0x11*8], eax
+			  mov[ ebx+0x11*8+4], edx
+
 			  mov word[pidt] , 256*8-1
 			  mov dword[pidt+2] , idt_linear_address
 			  lidt [pidt]
@@ -80,7 +94,16 @@ _start:
               call Init8259A
               sti
 
-			  int 0x70
+			  call cmain
+			mov al, 0x4
+			int 0x11
+			 mov ebx, selfMessage
+			 mov ecx, 0xf00003
+			 mov al, 2
+			 int 0x11
+
+			 
+
 
 	jmp $
 ;-------------------------------------------------------------------------------
@@ -116,26 +139,40 @@ sys_call_handler:
 									;5 system calls available
 		cmp al, 0					;0  putchar , cl=char
 		jne	.endhandle0
-
+		push ecx
+		call putchar
+		add esp, 4
+		jmp .endsyscall
 	.endhandle0:
 
 		cmp al, 1					;1	getchar , return al=getchar()
 		jne	.endhandle1
+		xor eax, eax
+		call getchar
+		jmp .endsyscall
 		
 	.endhandle1:
 		cmp al, 2					;2	simple_puts , ebx=*str  , ecx=pos<<16+col
 		jne	.endhandle2
+		push ecx
+		push ebx
+		call simple_puts
+		add esp , 8
+		jmp .endsyscall
 		
 	.endhandle2:
-		cmp al, 3					;3  clock() return eax= hour*60*60+min*60+second
+		cmp al, 3					;3  clock() return BCD code 0x00HourMinSec
 		jne	.endhandle3
-		
+		call curr_clock
+		jmp .endsyscall
 	.endhandle3:
 
 		cmp al, 4					;4	clear screen()
-		jne	.endhandle4
-		
-	.endhandle4:
+		jne	.endsyscall
+
+		call clear_screen
+
+	.endsyscall:
 		iretd
 
 rtm_0x70_interrupt_handle:
@@ -227,6 +264,31 @@ roll_screen:
 		mov word [VideoSite+ebx], 0x0720
 		add bx, 2
 		loop .cls
+		
+		popad
+		ret
+clear_screen:
+		pushad
+		mov ecx, 2000
+		mov ebx, 0
+	.clall:
+		mov word [VideoSite+ebx], 0x0720
+		add bx, 2
+		loop .clall
+
+		xor eax, eax
+		mov al, 0x0e
+		mov dx, 0x3d4
+		out dx, al
+		mov al, 0
+		inc dx
+		out dx, al
+		mov al ,0x0f
+		dec dx
+		out dx, al
+		mov al, 0
+		inc dx
+		out dx, al
 
 		popad
 		ret
@@ -235,6 +297,7 @@ roll_screen:
 					dd 0
 		pgdt		dw 0
 					dd 0
+		selfMessage db '17341038 fuchang OS in protectMODE', 0
 		
 ;-------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------

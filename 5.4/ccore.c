@@ -15,6 +15,9 @@ extern void Out(u16, u8);
 extern u8 In(u16);
 extern void c_rtm_0x70_interrupt_handle();
 extern void Init8259A();
+extern void flush_to_keyb(u8 );
+extern u8 getchar();
+extern u32 curr_clock();
 
 char buf[BUFLEN+1];
 // StructTest a= (StructTest){1,2,3}, b=(StructTest){4,5,6};
@@ -35,6 +38,7 @@ void cmain(){
 	// u64 tmp = (1ll<<33)+7;
 	simple_puts("Hello world!",0x7);
 	simple_puts("I'm from C language",(1*80+0<<16)+6);
+	// for (int i=0; i<10; ++i)putchar(getchar());
 	return ;
 }
 //------------------------------------------------------------------
@@ -80,7 +84,10 @@ void Init8259A(){
 
 	Out(0x70, 0x0c); In(0x71);
 }
+
+u8 keybuf=0, boolkeybuf=0;
 void flush_to_keyb(u8 keyval){
+	if ( keyval>=0x080) return ;
 	u8 ch=0;
 	for (int i=0; i<KEYNUMS; ++i)
 		if ( keyval == keymp[3*i+1])ch=keymp[3*i];
@@ -92,7 +99,7 @@ u8 getchar(){
 	return keybuf;
 }
 //------------------------------------------------------------------
-//cycle
+//clock interruption
 const char message_cyc[4]="\\|/-";
 int curcyc=0;
 void c_rtm_0x70_interrupt_handle(){
@@ -102,9 +109,24 @@ void c_rtm_0x70_interrupt_handle(){
 	buf[0] = message_cyc[curcyc++];buf[1]=0;
 	curcyc&=3;
 	simple_puts(buf, (24*80+79<<16) + 4);
-
+	show_current_clock();
 }
-
+u32 curr_clock(){	// BCD code ,total 3 byte 12:34:56 <---> 0x00123456
+	u32 res=0;
+	Out(0x70, 0x84);	res=In(0x71);
+	Out(0x70, 0x82);	res=(res<<8)|In(0x71);
+	Out(0x70, 0x80);	res=(res<<8)|In(0x71);
+	return res;
+}
+void show_current_clock(){ 
+	u32 clk= curr_clock(), len=0;
+	for (int i=0; i<6; ++i, clk>>=4){
+		buf[len++] = (clk&0x0f)+'0';
+		if ( i<5 && i%2==1) buf[len++]=':';
+	}
+	reverse(buf, buf+len); buf[len]=0;
+	simple_puts(buf, (24*80+70<<16)|8);
+}
 
 //------------------------------------------------------------------
 // strone_block
@@ -123,3 +145,6 @@ void c_block_stone(u32 BaseX, u32 BaseY){
 		curx+=dx[curd]; cury+= dy[curd];
 	}
 }
+
+//------------------------------------------------------------------
+// read current clock
