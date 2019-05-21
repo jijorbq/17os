@@ -6,6 +6,7 @@
          idt_linear_address     equ  0x0001f000  ;IDT线性基地址 
          VideoSite                equ 0x000b8000
 		 user0_base_address equ 0x0045000   ;常数，用户程序加载的起始内存地址 
+		 user1_base_address equ 0x0050000
 
 global simple_puts
 global _start
@@ -92,7 +93,14 @@ _start:
 			  lidt [pidt]
 
               call Init8259A
-              sti
+
+			sti
+			  pushfd
+			  mov eax , [esp]
+			  mov [PCB+0x8], eax
+			  mov [PCB+0x14], eax
+			  popfd
+			  mov eax, 0x0730
 
 		; 	  call cmain
 		; 	mov al, 0x01
@@ -107,10 +115,10 @@ _start:
 		; 	 mov ecx, 0xf00003
 		; 	 mov al, 2
 		; 	 int 0x11
-			
 
-
-			jmp user0_base_address
+		jmp user1_base_address
+	.core_end:
+			jmp $
 ;-------------------------------------------------------------------------------
 make_gate_descriptor:
 		push ebx
@@ -183,8 +191,7 @@ sys_call_handler:
 		iretd
 
 rtm_0x70_interrupt_handle:
-		sti
-		push eax
+		pushad
 		mov al,0x20                        ;中断结束命令EOI
 		out 0xa0,al                        ;向8259A从片发送
 		out 0x20,al                        ;向8259A主片发送
@@ -193,8 +200,45 @@ rtm_0x70_interrupt_handle:
 		out 0x70,al
 		in al,0x71                         ;读一下RTC的寄存器C，否则只发生一次中断
 										;此处不考虑闹钟和周期性中断的情况
-		pop eax
 		call c_rtm_0x70_interrupt_handle
+
+											;  exchange the process
+		xor ebx , ebx						; store the previous PCB
+		mov al, [curpc]
+		cmp al, 1
+		mov ecx, 0xc
+		cmovz ebx, ecx						; 4B*3
+		add ebx , PCB
+		xor al, 1
+		mov [curpc] , al
+
+		mov eax, [esp+0x20]
+		mov [ebx], eax
+		mov eax, [esp+0x24]
+		mov [ebx+4], eax
+		mov eax , [esp+0x28]
+		mov [ebx+8], eax
+
+		xor ebx, ebx						;release the opposite PCB
+		mov al, [curpc]
+		cmp al, 1
+		cmove ebx, ecx
+		add ebx , PCB
+
+		mov eax, [ebx]
+		mov [esp+0x20], eax
+		mov eax, [ebx+4]
+		mov [esp+0x24], eax
+		mov eax, [ebx+8]
+		mov [esp+0x28] , eax
+
+		popad
+
+		mov ax, [curti]
+		inc ax
+		and al, 0x037
+		mov [curti], ax
+
 		iretd
 
 keyboard_interrupt_handle:
@@ -306,6 +350,10 @@ clear_screen:
 		pgdt		dw 0
 					dd 0
 		selfMessage db '17341038 fuchang OS in protectMODE', 0
+		PCB			dd user0_base_address,flat_4gb_code_seg_sel,0,user1_base_address,flat_4gb_code_seg_sel,0
+			; eip , cs , eflags
+		curpc		db 1
+		curti		dw 0x0730
 		
 ;-------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------

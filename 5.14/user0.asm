@@ -4,11 +4,15 @@ global getchar
 global get_curr_time
 global _start
 extern user_main
+VideoSite                equ 0x000b8000
 _start:
 		; mov al, 4			; clear _screen
 		; int 0x11
 		; call user_main
-		jmp $
+		mov word [VideoSite+0x0],  0x0
+		mov word [VideoSite+0x0],  ax
+
+		jmp _start
 putchar:
 		push eax
 		push ecx
@@ -28,5 +32,6 @@ get_curr_time:
 		mov al, 3
 		int 0x11
 		ret
+
 
 ;---------------

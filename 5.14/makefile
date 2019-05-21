@@ -6,6 +6,7 @@
 # 	nasm -f elf a1.asm -o a1.o
 all:
 	nasm mbr.asm -f bin -o mbr.bin
+	
 	gcc -m32 -Og -c ccore.c -o ccore.o -fno-PIC -fno-builtin -nostdinc -fno-stack-protector
 	nasm -f elf -g -F stabs  acore.asm -o acore.o
 #	gcc -o fd0  -m32 a.o c.o
@@ -14,6 +15,9 @@ all:
 	gcc -m32 -Og -c user0.c -o cuser0.o -fno-PIC -fno-builtin -nostdinc -fno-stack-protector
 	nasm -f elf -g -F stabs user0.asm -o auser0.o
 	ld -m elf_i386 -N auser0.o cuser0.o -s -Ttext 0x00045000 --oformat binary -o user0.bin --entry=_start
+
+	nasm -f elf -g -F stabs user1.asm -o auser1.o
+	ld -m elf_i386 -N auser1.o -s -Ttext 0x00050000 --oformat binary -o user1.bin --entry=_start
 
 
 #fd0:loa.o ker.o

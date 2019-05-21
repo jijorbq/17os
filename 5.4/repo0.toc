@@ -1,0 +1,21 @@
+\contentsline {section}{\numberline {一、\nobreakspace {}}实验目的}{2}
+\contentsline {section}{\numberline {二、\nobreakspace {}}配置方法及相关工具说明}{2}
+\contentsline {subsection}{\numberline {（一）}实验支撑环境}{2}
+\contentsline {subsection}{\numberline {（二）}实验开发工具}{2}
+\contentsline {section}{\numberline {三、\nobreakspace {}}实验过程}{3}
+\contentsline {subsection}{\numberline {（一）}系统调用详情}{3}
+\contentsline {subsubsection}{\numberline {3.1.1}0x0 , putchar}{3}
+\contentsline {subsubsection}{\numberline {3.1.2}0x01 , getchar}{4}
+\contentsline {subsubsection}{\numberline {3.1.3}0x02 , simple\_puts}{4}
+\contentsline {subsubsection}{\numberline {3.1.4}0x03 , BCD clock()}{4}
+\contentsline {subsubsection}{\numberline {3.1.5}0x04 , clear screen}{4}
+\contentsline {subsection}{\numberline {（二）}系统调用代码分析}{4}
+\contentsline {subsubsection}{\numberline {3.2.1}0x0 , putchar}{4}
+\contentsline {subsubsection}{\numberline {3.2.2}0x01 , getchar}{6}
+\contentsline {subsubsection}{\numberline {3.2.3}0x02 , simple\_puts}{7}
+\contentsline {subsubsection}{\numberline {3.2.4}0x03 , BCD clock()}{9}
+\contentsline {subsubsection}{\numberline {3.2.5}0x04 , clear screen}{11}
+\contentsline {subsection}{\numberline {（三）}内核代码测试系统调用}{12}
+\contentsline {subsection}{\numberline {（四）}用户代码测试系统调用}{13}
+\contentsline {section}{\numberline {四、\nobreakspace {}}实验结果及分析}{14}
+\contentsline {section}{\numberline {五、\nobreakspace {}}实验总结}{19}

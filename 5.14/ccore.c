@@ -147,4 +147,9 @@ void c_block_stone(u32 BaseX, u32 BaseY){
 }
 
 //------------------------------------------------------------------
-// read current clock
+struct PCB{
+	PCB *pre;		// linked list 
+	u16 Gs, Fs, Ds, Ss, Es;
+	u32 Esp;
+};
+
