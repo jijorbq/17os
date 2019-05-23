@@ -4,7 +4,9 @@ global getchar
 global get_curr_time
 global _start
 extern user_main
-VideoSite                equ 0x000b8000
+VideoSite                equ 0x800b8000
+			program_length dd prog_end-$$
+			entry_point dd _start
 _start:
 		; mov al, 4			; clear _screen
 		; int 0x11
@@ -35,3 +37,6 @@ get_curr_time:
 
 
 ;---------------
+[section .data]
+	sign db 'this is data end'
+	prog_end:
