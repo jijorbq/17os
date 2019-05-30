@@ -18,6 +18,7 @@ extern void Init8259A();
 extern void flush_to_keyb(u8 );
 extern u8 getchar();
 extern u32 curr_clock();
+extern u32 allocate_a_4k_page();
 
 char buf[BUFLEN+1];
 // StructTest a= (StructTest){1,2,3}, b=(StructTest){4,5,6};
@@ -147,11 +148,88 @@ void c_block_stone(u32 BaseX, u32 BaseY){
 }
 
 //------------------------------------------------------------------
-struct PCB{
+struct TCB{
 	struct PCB *pre;		// linked list 
-	u16 Gs, Fs, Ds, Ss, Es;
-	u32 Esp;
-}PCB;
+	u16 state;u32 prog_bas;
+	u16 LDT_lim;u32 LDT_bas; u16 LDT_sel;
+	u16 TSS_lim;u32 TSS_bas; u16 TSS_sel;
+	u32 Stack0_4kblen,Stack0_bas; u16 Stack0_sel; u32 Stack0_initesp;
+	u32 Stack1_4kblen,Stack1_bas; u16 Stack1_sel; u32 Stack1_initesp;
+	u32 Stack2_4kblen,Stack2_bas; u16 Stack2_sel; u32 Stack2_initesp;
+	u16	head_sel;
+};
+struct TSS{
+	u32 preTSS;
+	u32 ESP0, SS0, ESP1, SS1, ESP2, SS2;
+	u32 CR3, EIP,EFLAG;
+	u32 EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI;
+	u32 ES, CS, SS, DS,FS, GS, LDTsel;
+	u16 T, IOmap;
+};
+
+void Load_program(int sectors, TCB *t){
+	read_hard_disk_1(sectors,c_buf);
+	u32 siz = *((*u32)c_buf); 
+	u32 totsec=((siz+0x0fff)>>12)<<3;
+	u32 prog_addr=t->prog_bas;
+	for (u32 i=0=t->prog_bas; i<totsec; ++i,prog_addr+=512){
+		alloc_inst_a_page(prog_addr);
+		read_hard_disk_1(sectors+i, prog_addr);
+	}
+
+	t->TSS_bas=TSS_array; TSS_array+=4096; // allocate 4KB/per tss
+	t->TSS_lim=103;
+
+	allloc_inst_a_page(prog_addr);
+	t->LDT_bas=prog_addr;prog_addr+=512;
+
+	TSS *tssp = t->TSS_bas;
+	tssp->CS=AddDescri(
+		0x00000000,0x000fffff,0x00c0f800, t
+	)|0x3; // 建立代码段描述符并放入ldt中，返回段选择子,特权级设为3
+	tssp->DS=tssp->ES=tssp->FS=tssp->gs=Adddescri(
+		0x00000000,0x000fffff,0x00c0f200,t
+	)|0x3;// 建立数据段描述符并放入ldt中，返回段选择子。特权级设为3
+
+	alloc_inst_a_page(prog_addr);prog_addr+=512;
+	tssp->SS=tssp->DS;tssp->ESP=prog_addr;
+	
+	//在用户任务的局部地址空间内创建0特权级堆栈
+	alloc_inst_a_page(prog_addr);prog_addr+=512;
+	tssp->ESP0=prog_addr;
+	tssp->SS0=AddDescri(
+		0x0, 0x000fffff, 0x00c09200,t
+	)|0x0; // ;设置选择子的特权级为0
+
+	//在用户任务的局部地址空间内创建1特权级堆栈
+	alloc_inst_a_page(prog_addr);prog_addr+=512;
+	tssp->ESP1=prog_addr;
+	tssp->SS1=AddDescri(
+		0x0, 0x000fffff, 0x00c0b200,t
+	)|0x1; // ;设置选择子的特权级为1
+
+	//在用户任务的局部地址空间内创建2特权级堆栈
+	alloc_inst_a_page(prog_addr);prog_addr+=512;
+	tssp->ESP2=prog_addr;
+	tssp->SS2=AddDescri(
+		0x0, 0x000fffff, 0x00c0d200,t
+	)|0x2; // ;设置选择子的特权级为1
+
+	//;在GDT中登记LDT描述符,并填写到TCB，TSS中
+	t->LDT_sel=tssp->LDTsel=AddDescri_2_gdt(
+		t->LDT_bas, t->LDT_lim, 0x00408200
+	);
+	
+	tssp->preTSS=0x0;tssp->IOmap=t->TSS_lim;
+	tssp->T=0;
+
+	//;在GDT中登记TSS描述符,并填写到TCB，
+	t->TSS_sel=AddDescri_2_gdt(
+		t->TSS_bas, t->TSS_lim, 0x00408900
+	);
+
+	tssp->CR3=create_copy_cur_pdir();
+}
 
 //-------------------------------------------------------------------
 // paging func
@@ -170,9 +248,12 @@ u32 allocate_a_4k_page(){
 	for (int i=0; i<page_map_len<<3; ++i){
 		if ( (page_bit_map[i>>3]&(1<<(i&0x7)))==0){
 			page_bit_map[i>>3]^=1<<(i&0x7);
-			return i;
+			return i<<12;
 		}
 	}
 	simple_puts("Wrong On allocated page!", (3*80<<16)+0x8);
 	return -1;
 }
+
+
+//

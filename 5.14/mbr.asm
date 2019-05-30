@@ -3,12 +3,12 @@
          core_start_sector equ 0x00000001   ;常数，内核的起始逻辑扇区号 
 	;   core_length_sector equ 0x10
          
-         user0_base_address equ 0x00045000   ;常数，用户程序0加载的起始内存地址 
-         user0_start_sector equ 50   ;常数，用户程序0的起始逻辑扇区号 
-       ;   user0_length_sector equ 0x10
+       ;   user0_base_address equ 0x00045000   ;常数，用户程序0加载的起始内存地址 
+       ;   user0_start_sector equ 50   ;常数，用户程序0的起始逻辑扇区号 
+       ; ;   user0_length_sector equ 0x10
 
-         user1_base_address equ 0x00050000   ;常数，用户程序1加载的起始内存地址 
-         user1_start_sector equ 75   ;常数，用户程序1的起始逻辑扇区号 
+       ;   user1_base_address equ 0x00050000   ;常数，用户程序1加载的起始内存地址 
+       ;   user1_start_sector equ 75   ;常数，用户程序1的起始逻辑扇区号 
        ;   user1_length_sector equ 0x10
 	   %macro macro_load_program 2
 			mov eax, %1

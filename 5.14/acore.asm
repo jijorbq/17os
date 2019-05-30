@@ -5,8 +5,8 @@
        ;   User0Start                equ 0x80040508
          idt_linear_address     equ  0x8001f000  ;IDT线性基地址 
          VideoSite                equ 0x800b8000
-		 user0_base_address equ 0x80045000   ;常数，用户程序加载的起始内存地址 
-		 user1_base_address equ 0x80050000
+		 user0_base_address equ 0xf0045000   ;常数，用户程序加载的起始内存地址 
+		 user1_base_address equ 0xf0050000
 
 		 %macro set_up_Idescriptor 2
 		 mov eax, %1
@@ -18,6 +18,16 @@
 		 mov [ebx+%2*8], eax
 		 mov [ebx+%2*8+4], edx
 		 %endmacro
+		 %macro alloc_core_linear 0              ;在内核空间中分配虚拟内存 
+               mov ebx,[core_tcb+0x06]
+               add dword [core_tcb+0x06],0x1000
+               call flat_4gb_code_seg_sel:alloc_inst_a_page
+         %endmacro 
+		%macro alloc_user_linear 0              ;在任务空间中分配虚拟内存 
+               mov ebx,[esi+0x06]
+               add dword [esi+0x06],0x1000
+               call flat_4gb_code_seg_sel:alloc_inst_a_page
+         %endmacro
 
 global simple_puts
 global _start
@@ -30,6 +40,7 @@ extern putnum
 extern putchar
 extern getchar
 extern cmain
+extern allocate_a_4k_page
 extern c_block_stone
 extern flush_to_keyb
 extern curr_clock
@@ -39,13 +50,13 @@ extern curr_clock
 			
 _start:
 			;尝试在内核中加载用户程序
-			mov eax, user0_base_address
+			mov eax, PCB
 			push eax
 			mov eax, 50
 			push eax
 			call Load_user_program
 
-			mov eax, user1_base_address
+			mov eax, PCB+0xc
 			push eax
 			mov eax, 75
 			push eax
@@ -123,7 +134,7 @@ _start:
 		; 	 mov al, 2
 		; 	 int 0x11
 
-		jmp [user1_base_address+4]
+		jmp [PCB+0xc]
 	.core_end:
 			jmp $
 ;-------------------------------------------------------------------------------
@@ -272,8 +283,10 @@ keyboard_interrupt_handle:
 		pgdt		dw 0
 					dd 0
 		selfMessage db '17341038 fuchang OS in protectMODE', 0
-		PCB			dd user0_base_address+8,flat_4gb_code_seg_sel,0,user1_base_address+8,flat_4gb_code_seg_sel,0
+		PCB			dd user0_base_address,flat_4gb_code_seg_sel,0,user1_base_address,flat_4gb_code_seg_sel,0
+					; current_addr, cs, eflags
 			; eip , cs , eflags
+		core_tcb	times 32 db 0
 		curpc		db 1
 		curti		dw 0x0730
 		
@@ -339,7 +352,7 @@ read_hard_disk_0:                           ;从硬盘读取一个逻辑扇区�
          retf                               ;远返回
 
 Load_user_program:							;加载并重定位用户程序
-											;输入: (prog_section, prog_target_linearaddress)
+											;输入: (prog_section, TCB *pointer)
                                             ;输出：无 
 		pushad
 		mov ebp, esp
@@ -356,37 +369,59 @@ Load_user_program:							;加载并重定位用户程序
 		mov eax, cr3
 		mov cr3, eax						;reflash TLB
 
-		mov eax, [ ebp+36]					; get the sector of program
-		mov ebx, core_buf
-		call flat_4gb_code_seg_sel:read_hard_disk_0
+	; 	mov eax, [ ebp+36]					; get the sector of program
+	; 	mov ebx, core_buf
+	; 	call flat_4gb_code_seg_sel:read_hard_disk_0
 
-		; judge the size of program
-		mov eax, [core_buf]
-		add eax, 0x0fff						;4kb compensate
-		shr eax, 12
-		mov ecx, eax
-		shl ecx, 3
+	; 	; calc the size of program
+	; 	mov eax, [core_buf]
+	; 	add eax, 0x0fff						;4kb compensate
+	; 	shr eax, 12
+	; 	mov ecx, eax
+	; 	shl ecx, 3
 
-		mov eax, [ebp+36]
-		mov ebx, [ebp+40]
-	.b2:
-		call flat_4gb_code_seg_sel:read_hard_disk_0
-		inc eax
-		loop .b2
+	; 	mov eax, [ebp+36]
+	; 	mov edi, [ebp+40]					;TCB
+	; 	mov ebx, [edi+0x06]						;ebx<--TCB.start_addr
+	; .b2:
+	; 	push ebx
+	; 	call flat_4gb_code_seg_sel:alloc_inst_a_page
+	; 	pop ebx
+	; 	call flat_4gb_code_seg_sel:read_hard_disk_0
+	; 	inc eax
+	; 	loop .b2
+
+	; 	; mov ebx, [core_buf+4]				;ebx= entry_start
+	; 	; mov [edi], ebx						;PCB[0]
+	; 	mov esi , [ebp+40]
+
+
+	; 	alloc_core_linear					;create TSS
+	; 	mov [esi+0x14], ebx
+	; 	mov word [esi+0x12],103
+
+	; 	alloc_user_linear
+		call c_load_prog
+		pushfd
+		pop edx
+		mov [ebx+36], edx
+		
 	popad
 
 	ret 8
 
 alloc_inst_a_page:							;分配一个页，并安装在当前活动的
                                             ;层级分页结构中
-                                            ;alloc(页的;分配一个页，并安装在当前活动的
+                                            ;alloc(页的线性地址)
+											;如果存在就不分配了
 		push eax
 		push ebx
 		push esi
 
 		;check the exist of PageSheet
-		mov esi, [esp+0x10]
-		shr esi, 20
+		mov esi, [esp+0x14]
+		shr esi, 22
+		shl esi, 2
 		or esi, 0xfffff000
 		test dword [esi], 0x01
 		jnz .b1
@@ -397,15 +432,18 @@ alloc_inst_a_page:							;分配一个页，并安装在当前活动的
         mov [esi],eax   
 	.b1:
 
-		mov esi, [esp+0x10]
+		mov esi, [esp+0x14]
 		shr esi, 12
 		shl esi, 2
 		or esi, 0xffc00000
 
+		test dword[esi], 0x01
+		jnz .b2
+
 		call allocate_a_4k_page
 		or eax, 0x07
 		mov [esi], eax
-
+	.b2:
 		pop esi
 		pop ebx
 		pop eax
