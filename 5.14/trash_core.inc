@@ -84,3 +84,63 @@ clear_screen:
 
 		popad
 		ret
+
+
+; Load_user_program:							;加载并重定位用户程序
+; 											;输入: (prog_section, TCB *pointer)
+;                                             ;输出：无 
+; 		pushad
+; 		mov ebp, esp
+
+; 		 ;清空当前页目录的前半部分（对应低2GB的局部地址空间） 
+; 		mov ebx, 0xfffff000
+; 		xor esi, esi
+; 	.b1:
+; 		mov dword [ebx+esi*4], 0x00000000
+; 		inc esi
+; 		cmp esi, 512
+; 		jl .b1
+
+; 		mov eax, cr3
+; 		mov cr3, eax						;reflash TLB
+
+; 	; 	mov eax, [ ebp+36]					; get the sector of program
+; 	; 	mov ebx, core_buf
+; 	; 	call flat_4gb_code_seg_sel:read_hard_disk_0
+
+; 	; 	; calc the size of program
+; 	; 	mov eax, [core_buf]
+; 	; 	add eax, 0x0fff						;4kb compensate
+; 	; 	shr eax, 12
+; 	; 	mov ecx, eax
+; 	; 	shl ecx, 3
+
+; 	; 	mov eax, [ebp+36]
+; 	; 	mov edi, [ebp+40]					;TCB
+; 	; 	mov ebx, [edi+0x06]						;ebx<--TCB.start_addr
+; 	; .b2:
+; 	; 	push ebx
+; 	; 	call flat_4gb_code_seg_sel:alloc_inst_a_page
+; 	; 	pop ebx
+; 	; 	call flat_4gb_code_seg_sel:read_hard_disk_0
+; 	; 	inc eax
+; 	; 	loop .b2
+
+; 	; 	; mov ebx, [core_buf+4]				;ebx= entry_start
+; 	; 	; mov [edi], ebx						;PCB[0]
+; 	; 	mov esi , [ebp+40]
+
+
+; 	; 	alloc_core_linear					;create TSS
+; 	; 	mov [esi+0x14], ebx
+; 	; 	mov word [esi+0x12],103
+
+; 	; 	alloc_user_linear
+; 		call c_load_prog
+; 		pushfd
+; 		pop edx
+; 		mov [ebx+36], edx
+		
+; 	popad
+
+; 	ret 8

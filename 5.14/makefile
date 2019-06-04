@@ -14,19 +14,19 @@ all:
 
 	gcc -m32 -Og -c user0.c -o cuser0.o -fno-PIC -fno-builtin -nostdinc -fno-stack-protector
 	nasm -f elf -g -F stabs user0.asm -o auser0.o
-	ld -m elf_i386 -N auser0.o cuser0.o -s -Ttext 0xf0045000 --oformat binary -o user0.bin --entry=_start
+	ld -m elf_i386 -N auser0.o cuser0.o -s -Ttext 0x0 --oformat binary -o user0.bin --entry=_start
 
 	nasm -f elf -g -F stabs user1.asm -o auser1.o
-	ld -m elf_i386 -N auser1.o -s -Ttext 0xf0050000 --oformat binary -o user1.bin --entry=_start
+	ld -m elf_i386 -N auser1.o -s -Ttext 0x0 --oformat binary -o user1.bin --entry=_start
 
 user0:
 	gcc -m32 -Og -c user0.c -o cuser0.o -fno-PIC -fno-builtin -nostdinc -fno-stack-protector
 	nasm -f elf -g -F stabs user0.asm -o auser0.o
-	ld -m elf_i386 -N auser0.o cuser0.o -s -Ttext 0xf0045000 --oformat binary -o user0.bin --entry=_start
+	ld -m elf_i386 -N auser0.o cuser0.o -s -Ttext 0x0 --oformat binary -o user0.bin --entry=_start
 
 user1:
 	nasm -f elf -g -F stabs user1.asm -o auser1.o
-	ld -m elf_i386 -N auser1.o -s -Ttext 0xf0050000 --oformat binary -o user1.bin --entry=_start
+	ld -m elf_i386 -N auser1.o -s -Ttext 0x0 --oformat binary -o user1.bin --entry=_start
 
 #fd0:loa.o ker.o
 #	ld -m elf_i386 -N loa.o ker.o -s -Ttext 0x7c00 --oformat binary -o fd0

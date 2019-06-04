@@ -29,13 +29,13 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0x7feece3cd010. after alignment, vector=0x7feece3ce000
+00000000000i[MEM0 ] allocated memory at 0x7fcb0c35e010. after alignment, vector=0x7fcb0c35f000
 00000000000i[MEM0 ] 128.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=128
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/gdb/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/41472 ('/usr/local/share/bochs/gdb/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Fri May 24 10:56:01 2019 (time0=1558666561)
+00000000000i[CMOS ] Setting initial clock to: Tue Jun  4 11:42:14 2019 (time0=1559619734)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] tried to open 'fd0' read/write: No such file or directory
@@ -118,25 +118,48 @@
 00000869666i[BIOS ] ata0-0: PCHS=2/16/64 translation=large LCHS=2/16/64
 00004316728i[BIOS ] IDE time out
 00016286282i[BIOS ] Booting from 0000:7c00
-00016354790i[XGUI ] charmap update. Font Height is 16
-00080991710i[     ] dbg: Quit
-00080991710i[CPU0 ] CPU is in protected mode (active)
-00080991710i[CPU0 ] CS.d_b = 32 bit
-00080991710i[CPU0 ] SS.d_b = 32 bit
-00080991710i[CPU0 ] | EAX=00000737  EBX=8001f000  ECX=00008e00  EDX=80048e00
-00080991710i[CPU0 ] | ESP=80007000  EBP=00000000  ESI=00000100  EDI=0000ffac
-00080991710i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf SF zf af PF cf
-00080991710i[CPU0 ] | SEG selector     base    limit G D
-00080991710i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00080991710i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00080991710i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00080991710i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00080991710i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00080991710i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00080991710i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00080991710i[CPU0 ] | EIP=f0045017 (f0045017)
-00080991710i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
-00080991710i[CPU0 ] | CR3=0x00020000 CR4=0x00000000
-00080991710i[CMOS ] Last time is 1558666581 (Fri May 24 10:56:21 2019)
-00080991710i[XGUI ] Exit
-00080991710i[CTRL ] quit_sim called with exit code 0
+00016400000i[XGUI ] charmap update. Font Height is 16
+00024001376e[CPU0 ] task_switch(exception after commit point): SS not valid or writeable segment
+00024001376e[CPU0 ] interrupt(): SS is not writable data segment
+00024001376e[CPU0 ] interrupt(): SS is not writable data segment
+00024001376i[CPU0 ] CPU is in protected mode (active)
+00024001376i[CPU0 ] CS.d_b = 32 bit
+00024001376i[CPU0 ] SS.d_b = 32 bit
+00024001376i[CPU0 ] | EAX=00000000  EBX=00000000  ECX=00000000  EDX=00000000
+00024001376i[CPU0 ] | ESP=0000b000  EBP=00000000  ESI=00000000  EDI=00000000
+00024001376i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf sf zf af pf cf
+00024001376i[CPU0 ] | SEG selector     base    limit G D
+00024001376i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00024001376i[CPU0 ] |  CS:0007( 0000| 1|  3) 00000000 ffffffff 1 1
+00024001376i[CPU0 ] |  DS:000f( 0001| 1|  3) 00000000 ffffffff 1 1
+00024001376i[CPU0 ] |  SS:000f( 0001| 1|  3) 00000000 ffffffff 1 1
+00024001376i[CPU0 ] |  ES:000f( 0001| 1|  3) 00000000 ffffffff 1 1
+00024001376i[CPU0 ] |  FS:000f( 0001| 1|  3) 00000000 ffffffff 1 1
+00024001376i[CPU0 ] |  GS:000f( 0001| 1|  3) 00000000 ffffffff 1 1
+00024001376i[CPU0 ] | EIP=00000000 (00000000)
+00024001376i[CPU0 ] | CR0=0xe0000019 CR2=0x00000000
+00024001376i[CPU0 ] | CR3=0x00151000 CR4=0x00000000
+00024001376e[CPU0 ] exception(): 3rd (10) exception with no resolution, shutdown status is 00h, resetting
+00024001376i[SYS  ] bx_pc_system_c::Reset(HARDWARE) called
+00024001376i[CPU0 ] cpu hardware reset
+00024001376i[APIC0] allocate APIC id=0 (MMIO enabled) to 0xfee00000
+00024001376i[CPU0 ] CPUID[0x00000000]: 00000003 756e6547 6c65746e 49656e69
+00024001376i[CPU0 ] CPUID[0x00000001]: 00000f00 00000800 00000000 078bfbff
+00024001376i[CPU0 ] CPUID[0x00000002]: 00410601 00000000 00000000 00000000
+00024001376i[CPU0 ] CPUID[0x00000003]: 00000000 00000000 00000000 00000000
+00024001376i[CPU0 ] CPUID[0x00000004]: 00000000 00000000 00000000 00000000
+00024001376i[CPU0 ] CPUID[0x80000000]: 80000004 00000000 00000000 00000000
+00024001376i[CPU0 ] CPUID[0x80000001]: 00000000 00000000 00000000 00000000
+00024001376i[CPU0 ] CPUID[0x80000002]: 20202020 20202020 20202020 6e492020
+00024001376i[CPU0 ] CPUID[0x80000003]: 286c6574 50202952 69746e65 52286d75
+00024001376i[CPU0 ] CPUID[0x80000004]: 20342029 20555043 20202020 00202020
+00024001376i[     ] reset of 'unmapped' plugin device by virtual method
+00024001376i[     ] reset of 'biosdev' plugin device by virtual method
+00024001376i[     ] reset of 'speaker' plugin device by virtual method
+00024001376i[     ] reset of 'extfpuirq' plugin device by virtual method
+00024001376i[     ] reset of 'iodebug' plugin device by virtual method
+00024001376i[     ] reset of 'ioapic' plugin device by virtual method
+00024001376i[     ] reset of 'keyboard' plugin device by virtual method
+00024001376i[     ] reset of 'harddrv' plugin device by virtual method
+00024001376i[     ] reset of 'serial' plugin device by virtual method
+00024001376i[     ] reset of 'parallel' plugin device by virtual method

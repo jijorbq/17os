@@ -11,8 +11,11 @@ _start:
 		; mov al, 4			; clear _screen
 		; int 0x11
 		; call user_main
-		mov word [VideoSite+0x0],  0x0
-		mov word [VideoSite+0x0],  ax
+		inc cl
+		and cl, 0x0f
+		xor cl, 48
+		mov al, 0
+		int 0x11
 
 		jmp _start
 putchar:

@@ -7,7 +7,7 @@
          VideoSite                equ 0x800b8000
 		 user0_base_address equ 0xf0045000   ;常数，用户程序加载的起始内存地址 
 		 user1_base_address equ 0xf0050000
-												;被C语言调用的函数一律近返回
+
 		 %macro set_up_Idescriptor 2
 		 mov eax, %1
 		 mov bx, flat_4gb_code_seg_sel
@@ -21,12 +21,12 @@
 		 %macro alloc_core_linear 0              ;在内核空间中分配虚拟内存 
                mov ebx,[core_tcb+0x06]
                add dword [core_tcb+0x06],0x1000
-               call alloc_inst_a_page
+               call flat_4gb_code_seg_sel:alloc_inst_a_page
          %endmacro 
 		%macro alloc_user_linear 0              ;在任务空间中分配虚拟内存 
                mov ebx,[esi+0x06]
                add dword [esi+0x06],0x1000
-               call alloc_inst_a_page
+               call flat_4gb_code_seg_sel:alloc_inst_a_page
          %endmacro
 
 global simple_puts
@@ -34,14 +34,6 @@ global _start
 global In
 global Out
 global roll_screen
-global getCR3
-global alloc_inst_a_page
-global AddDescri_2_gdt
-global AddDescri_2_ldt
-global memcpy
-global Phyaddr
-global read_hard_disk_1
-global Clean_partial_PDE
 extern c_rtm_0x70_interrupt_handle
 extern Init8259A
 extern putnum
@@ -52,24 +44,23 @@ extern allocate_a_4k_page
 extern c_block_stone
 extern flush_to_keyb
 extern curr_clock
-extern Load_program
-extern Load_coreself
                      [bits 32]
 			program_length dd prog_end-$$
 			entry_start	dd _start
 			
 _start:
-			call Load_coreself
-			ltr ax 
-
+			 ;初始化创建程序管理器任务的任务控制块TCB
+			mov word [core_tcb+0x04], 0xffff
+			mov dword [core_tcb+0x06]
+			mov word [ebx], 0 
 			;尝试在内核中加载用户程序
 			mov eax, 50
 			push eax
-			call Load_program
+			call Load_user_program
 
 			mov eax, 75
 			push eax
-			call Load_program
+			call Load_user_program
 
 			;安装中断
 			mov eax , 0
@@ -197,17 +188,16 @@ AddDescri_2_ldt:				;AddDescri_2_ldt(bas, lim, attri, *tcb)
 		push edx
 		push edi
 
-		mov eax , [esp+0x14]
-		mov ebx , [esp+0x18]
-		mov ecx , [esp+0x1c]
+		mov eax , [esp+36]
+		mov ebx , [esp+40]
+		mov ecx , [esp+44]
 
 		call flat_4gb_code_seg_sel:make_seg_descriptor
 
-		mov edi , [esp+0x20]
-											;gcc中的struct 会有对齐的情况，注意。
-		mov ebx , [edi+0x08]				;ldt base
+		mov edi , [esp+48]
+		mov ebx , [edi+0x0c]
 		xor ecx, ecx
-		mov cx , [edi+0x0e]					;ldt limit
+		mov cx , [edi+0x0a]
 		inc cx
 		add ebx, ecx
 
@@ -217,7 +207,7 @@ AddDescri_2_ldt:				;AddDescri_2_ldt(bas, lim, attri, *tcb)
 		xor eax, eax
 		mov ax, cx
 		add cx, 7
-		mov [edi+0x0e], cx
+		mov [edi+0x0a], cx
 
 		or ax ,0x4				;TI=1
 		pop edi
@@ -235,9 +225,9 @@ AddDescri_2_gdt:				;AddDescri_2_gdt(bas,lim, attri)
 		
 		sgdt [pgdt]
 
-		mov eax , [esp+0x10]
-		mov ebx , [esp+0x14]
-		mov ecx , [esp+0x18]
+		mov eax , [esp+36]
+		mov ebx , [esp+40]
+		mov ecx , [esp+44]
 		call flat_4gb_code_seg_sel:make_seg_descriptor
 
 		movzx ebx, word [pgdt]
@@ -248,8 +238,7 @@ AddDescri_2_gdt:				;AddDescri_2_gdt(bas,lim, attri)
 		mov [ebx+4] , edx
 
 		add word [pgdt] ,8
-		
-		lgdt [pgdt]
+
 		xor eax, eax
 		mov ax , [pgdt]
 		shr ax , 3
@@ -270,11 +259,9 @@ memcpy:
 		mov esi , [esp+0x18]
 		mov ecx , [esp+0x1c]
 
-	.cpying:
-		mov al, [esi]				; mov eax [esi] is error
-		mov [edi] , al
-		inc edi
-		inc esi
+	.cpying
+		mov eax, [esi]
+		mov [edi] , eax
 		loop .cpying
 
 		pop ecx
@@ -285,7 +272,6 @@ memcpy:
 
 Phyaddr:
 		push ebx
-		mov ebx, [esp+0x8]
 		shr ebx, 12
 		shl ebx, 2
 		or ebx, 0xffc00000
@@ -295,9 +281,6 @@ Phyaddr:
 
 		ret 
 
-getCR3:
-		mov eax, cr3
-		ret 
 
 general_exeption_handler:
 		hlt
@@ -364,11 +347,44 @@ rtm_0x70_interrupt_handle:
 		in al,0x71                         ;读一下RTC的寄存器C，否则只发生一次中断
 										;此处不考虑闹钟和周期性中断的情况
 		call c_rtm_0x70_interrupt_handle
-											; C语言完成任务切换， 并返回下一个任务TCB指针
-		
-		mov ebx, eax
-		jmp far [ebx+0x10]					; u32 TSS_bas ; u16 TSS_sel
+
+											;  exchange the process
+		xor ebx , ebx						; store the previous PCB
+		mov al, [curpc]
+		cmp al, 1
+		mov ecx, 0xc
+		cmovz ebx, ecx						; 4B*3
+		add ebx , PCB
+		xor al, 1
+		mov [curpc] , al
+
+		mov eax, [esp+0x20]
+		mov [ebx], eax
+		mov eax, [esp+0x24]
+		mov [ebx+4], eax
+		mov eax , [esp+0x28]
+		mov [ebx+8], eax
+
+		xor ebx, ebx						;release the opposite PCB
+		mov al, [curpc]
+		cmp al, 1
+		cmove ebx, ecx
+		add ebx , PCB
+
+		mov eax, [ebx]
+		mov [esp+0x20], eax
+		mov eax, [ebx+4]
+		mov [esp+0x24], eax
+		mov eax, [ebx+8]
+		mov [esp+0x28] , eax
+
 		popad
+
+		mov ax, [curti]
+		inc ax
+		and al, 0x037
+		mov [curti], ax
+
 		iretd
 
 keyboard_interrupt_handle:
@@ -395,7 +411,7 @@ keyboard_interrupt_handle:
 		pgdt		dw 0
 					dd 0
 		selfMessage db '17341038 fuchang OS in protectMODE', 0
-		; PCB			dd user0_base_address,flat_4gb_code_seg_sel,0,user1_base_address,flat_4gb_code_seg_sel,0
+		PCB			dd user0_base_address,flat_4gb_code_seg_sel,0,user1_base_address,flat_4gb_code_seg_sel,0
 					; current_addr, cs, eflags
 			; eip , cs , eflags
 		core_tcb	times 32 db 0
@@ -463,77 +479,80 @@ read_hard_disk_0:                           ;从硬盘读取一个逻辑扇区�
       
          retf                               ;远返回
 
-read_hard_disk_1:                           ;从硬盘读取一个逻辑扇区（平坦模型） 
-                                            ;read_hard_disk_1(source sector, target addr)
-		cli
-         
-         pushad
-		 mov eax, [esp+36]
-		 mov ebx, [esp+40]
-      
-         push eax
-         
-         mov dx,0x1f2
-         mov al,1
-         out dx,al                          ;读取的扇区数
+Load_user_program:							;加载并重定位用户程序
+											;输入: (prog_section, TCB *pointer)
+                                            ;输出：无 
+		pushad
+		mov ebp, esp
 
-         inc dx                             ;0x1f3
-         pop eax
-         out dx,al                          ;LBA地址7~0
+		 ;清空当前页目录的前半部分（对应低2GB的局部地址空间） 
+		mov ebx, 0xfffff000
+		xor esi, esi
+	.b1:
+		mov dword [ebx+esi*4], 0x00000000
+		inc esi
+		cmp esi, 512
+		jl .b1
 
-         inc dx                             ;0x1f4
-         mov cl,8
-         shr eax,cl
-         out dx,al                          ;LBA地址15~8
+		mov eax, cr3
+		mov cr3, eax						;reflash TLB
 
-         inc dx                             ;0x1f5
-         shr eax,cl
-         out dx,al                          ;LBA地址23~16
+	; 	mov eax, [ ebp+36]					; get the sector of program
+	; 	mov ebx, core_buf
+	; 	call flat_4gb_code_seg_sel:read_hard_disk_0
 
-         inc dx                             ;0x1f6
-         shr eax,cl
-         or al,0xe0                         ;第一硬盘  LBA地址27~24
-         out dx,al
+	; 	; calc the size of program
+	; 	mov eax, [core_buf]
+	; 	add eax, 0x0fff						;4kb compensate
+	; 	shr eax, 12
+	; 	mov ecx, eax
+	; 	shl ecx, 3
 
-         inc dx                             ;0x1f7
-         mov al,0x20                        ;读命令
-         out dx,al
+	; 	mov eax, [ebp+36]
+	; 	mov edi, [ebp+40]					;TCB
+	; 	mov ebx, [edi+0x06]						;ebx<--TCB.start_addr
+	; .b2:
+	; 	push ebx
+	; 	call flat_4gb_code_seg_sel:alloc_inst_a_page
+	; 	pop ebx
+	; 	call flat_4gb_code_seg_sel:read_hard_disk_0
+	; 	inc eax
+	; 	loop .b2
 
-  .waits:
-         in al,dx
-         and al,0x88
-         cmp al,0x08
-         jnz .waits                         ;不忙，且硬盘已准备好数据传输 
+	; 	; mov ebx, [core_buf+4]				;ebx= entry_start
+	; 	; mov [edi], ebx						;PCB[0]
+	; 	mov esi , [ebp+40]
 
-         mov ecx,256                        ;总共要读取的字数
-         mov dx,0x1f0
-  .readw:
-         in ax,dx
-         mov [ebx],ax
-         add ebx,2
-         loop .readw
 
-         popad
-      
-        ;  sti
-      
-         ret                               
+	; 	alloc_core_linear					;create TSS
+	; 	mov [esi+0x14], ebx
+	; 	mov word [esi+0x12],103
+
+	; 	alloc_user_linear
+		call c_load_prog
+		pushfd
+		pop edx
+		mov [ebx+36], edx
+		
+	popad
+
+	ret 8
 
 alloc_inst_a_page:							;分配一个页，并安装在当前活动的
                                             ;层级分页结构中
-                                            ;void alloc(页的线性地址)
+                                            ;alloc(页的线性地址)
 											;如果存在就不分配了
 		push eax
 		push ebx
 		push esi
 
 		;check the exist of PageSheet
-		mov esi, [esp+0x10]
+		mov esi, [esp+0x14]
 		shr esi, 22
 		shl esi, 2
 		or esi, 0xfffff000
 		test dword [esi], 0x01
-		jnz .b1	
+		jnz .b1
 
 		;创建该线性地址所对应的页表 
         call allocate_a_4k_page            ;分配一个页做为页表 
@@ -541,7 +560,7 @@ alloc_inst_a_page:							;分配一个页，并安装在当前活动的
         mov [esi],eax   
 	.b1:
 
-		mov esi, [esp+0x10]
+		mov esi, [esp+0x14]
 		shr esi, 12
 		shl esi, 2
 		or esi, 0xffc00000
@@ -557,32 +576,8 @@ alloc_inst_a_page:							;分配一个页，并安装在当前活动的
 		pop ebx
 		pop eax
 
-		ret
+		retf
 
-global Clean_partial_PDE
-Clean_partial_PDE:						;清空当前页目录的前半部分
-										;（对应低2GB的局部地址空间） 
-	pushad
-
-		mov ebp, esp
-
-		 
-		mov ebx, 0xfffff000
-		xor esi, esi
-	.b1:
-		mov dword [ebx+esi*4], 0x00000000
-		inc esi
-		cmp esi, 512
-		jl .b1
-
-		mov ebx, 0xfffffff8				;新页目录的缓存也要清掉
-		mov dword [ebx], 0x00000000
-
-		mov eax, cr3
-		mov cr3, eax						;reflash TLB
-	popad
-
-	ret
 
 
 ;-------------------------------------------------------------------------------
