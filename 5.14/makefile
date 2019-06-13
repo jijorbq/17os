@@ -21,6 +21,13 @@ all:
 	nasm -f elf -g -F stabs user1.asm -o auser1.o
 	ld -m elf_i386 -N auser1.o cuser1.o  -s -Ttext 0x0 --oformat binary -o user1.bin --entry=_start -g
 
+	gcc -m32 -O0 -c user2.c -o cuser2.o -fno-PIC -fno-builtin -nostdinc -fno-stack-protector -g
+	nasm -f elf -g -F stabs user2.asm -o auser2.o
+	ld -m elf_i386 -N auser2.o cuser2.o  -s -Ttext 0x0 --oformat binary -o user2.bin --entry=_start -g
+
+	gcc -m32 -O0 -c user3.c -o cuser3.o -fno-PIC -fno-builtin -nostdinc -fno-stack-protector -g
+	nasm -f elf -g -F stabs user3.asm -o auser3.o
+	ld -m elf_i386 -N auser3.o cuser3.o  -s -Ttext 0x0 --oformat binary -o user3.bin --entry=_start -g
 user0:
 	gcc -m32 -Og -c user0.c -o cuser0.o -fno-PIC -fno-builtin -nostdinc -fno-stack-protector
 	nasm -f elf -g -F stabs user0.asm -o auser0.o

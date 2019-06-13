@@ -70,7 +70,17 @@ _start:
 			call Load_program
 			pop eax
 
-			mov eax, 75
+			mov eax, 70
+			push eax
+			call Load_program
+			pop eax
+
+			mov eax, 90
+			push eax
+			call Load_program
+			pop eax
+
+			mov eax, 110
 			push eax
 			call Load_program
 			pop eax
@@ -368,7 +378,7 @@ sys_call_handler:
 	.endhandle2:
 
 		cmp al, 3					;3  simple_putchar , ebx= color_site,  cl = ch
-		jne	.endhandle4
+		jne	.endhandle3
 		push ebx
 		push ecx
 		call simple_putchar
