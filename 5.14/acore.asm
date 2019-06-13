@@ -1,5 +1,5 @@
          flat_4gb_code_seg_sel  equ  0x0008      ;4GB代码段选择子 
-         flat_4gb_data_seg_sel  equ  0x0018      ;4GB数据段选择子 
+         flat_4gb_data_seg_sel  equ  0x0010      ;4GB数据段选择子 
        ;   idt_linear_address     equ  0x8001f000  ;IDT线性基地址 
        ;   VideoSite                equ 0x800b8000
        ;   User0Start                equ 0x80040508
@@ -8,10 +8,10 @@
 		 user0_base_address equ 0xf0045000   ;常数，用户程序加载的起始内存地址 
 		 user1_base_address equ 0xf0050000
 												;被C语言调用的函数一律近返回
-		 %macro set_up_Idescriptor 2
+		 %macro set_up_Idescriptor 3
 		 mov eax, %1
 		 mov bx, flat_4gb_code_seg_sel
-		 mov cx, 0x8e00
+		 mov cx, %3
 		 call flat_4gb_code_seg_sel:make_gate_descriptor
 
 		 mov ebx, idt_linear_address
@@ -54,7 +54,9 @@ extern flush_to_keyb
 extern curr_clock
 extern Load_program
 extern Load_coreself
+extern prog_end
                      [bits 32]
+		
 			program_length dd prog_end-$$
 			entry_start	dd _start
 			
@@ -66,10 +68,12 @@ _start:
 			mov eax, 50
 			push eax
 			call Load_program
+			pop eax
 
 			mov eax, 75
 			push eax
 			call Load_program
+			pop eax
 
 			;安装中断
 			mov eax , 0
@@ -80,8 +84,9 @@ _start:
 
 			mov eax, general_exeption_handler
 			mov bx, flat_4gb_code_seg_sel
-			mov cx, 0x8e00					;e表示任务门，如果用任务门则0101B，且需要提供TSS选择子。
+			mov cx, 0x8e00					;e表示中断，如果用任务门则0101B，且需要提供TSS选择子。
 			call flat_4gb_code_seg_sel:make_gate_descriptor
+			
 
 			mov ebx, idt_linear_address
 			xor esi, esi
@@ -108,12 +113,13 @@ _start:
        
               ; set clock interrupt
 
-			set_up_Idescriptor rtm_0x70_interrupt_handle, 0x70
+			set_up_Idescriptor rtm_0x70_interrupt_handle, 0x70 ,0xee00
 			  ; set keyboard inter
-			set_up_Idescriptor keyboard_interrupt_handle,0x21
+			; set_up_Idescriptor keyboard_interrupt_handle,0x21 , 0xee00
 
 			  ; set syscall 
-			set_up_Idescriptor sys_call_handler, 0x11
+			set_up_Idescriptor sys_call_handler, 0x11, 0xee00	;	dpl ->3 
+
 
 			  mov word[pidt] , 256*8-1
 			  mov dword[pidt+2] , idt_linear_address
@@ -127,23 +133,30 @@ _start:
 			;   mov [PCB+0x14], eax
 			;   popfd
 			;   mov eax, 0x0730
+			
+			  call cmain
+			; mov al, 0x01
+			; int 0x11
+			mov al, 0x5
+			int 0x11
+			mov cl, al
+			mov al, 0x0
+			int 0x11
+			mov al, 0x4
+			int 0x11
+			 mov ebx, selfMessage
+			 mov ecx, 0xf00003
+			 mov al, 2
+			 int 0x11
 
-		; 	  call cmain
-		; 	mov al, 0x01
-		; 	int 0x11
-		; 	mov cl, al
-		; 	mov al, 0x0
-		; 	int 0x11
-		; hlt
-		; 	mov al, 0x4
-		; 	int 0x11
-		; 	 mov ebx, selfMessage
-		; 	 mov ecx, 0xf00003
-		; 	 mov al, 2
-		; 	 int 0x11
+			 mov ecx, '$'
+			 mov ebx, 0x1000006
+			 mov al, 3
+			 int 0x11
 
+			 sti
 
-		sti
+		
 		; jmp [PCB+0xc]
 	.core_end:
 			jmp $
@@ -205,19 +218,19 @@ AddDescri_2_ldt:				;AddDescri_2_ldt(bas, lim, attri, *tcb)
 
 		mov edi , [esp+0x20]
 											;gcc中的struct 会有对齐的情况，注意。
-		mov ebx , [edi+0x08]				;ldt base
+		mov ebx , [edi+0x0c]				;ldt base
 		xor ecx, ecx
-		mov cx , [edi+0x0e]					;ldt limit
+		mov cx , [edi+0x0a]					;ldt limit
 		inc cx
 		add ebx, ecx
 
-		mov [ebx], edx
-		mov [ebx+0x4], eax
+		mov [ebx], eax						; bug ,swap of edx:eax
+		mov [ebx+0x4], edx
 
 		xor eax, eax
 		mov ax, cx
 		add cx, 7
-		mov [edi+0x0e], cx
+		mov [edi+0xa], cx
 
 		or ax ,0x4				;TI=1
 		pop edi
@@ -298,6 +311,13 @@ Phyaddr:
 getCR3:
 		mov eax, cr3
 		ret 
+global getEFLAGS
+getEFLAGS:
+		pushfd
+		pop eax
+		or eax, 0x00000200					; IF must be on 
+		; and eax, 0xfffffdff					; IF try to be off ?
+		ret 
 
 general_exeption_handler:
 		hlt
@@ -313,6 +333,13 @@ general_interrupt_handler:
 		iretd
 sys_call_handler: 
 									;5 system calls available
+									; 切换ds
+		push ds
+		push eax
+		mov ax , flat_4gb_data_seg_sel
+		mov ds , ax
+		pop eax
+
 		cmp al, 0					;0  putchar , cl=char
 		jne	.endhandle0
 		push ecx
@@ -339,21 +366,44 @@ sys_call_handler:
 		jmp .endsyscall
 		
 	.endhandle2:
-		cmp al, 3					;3  clock() return BCD code 0x00HourMinSec
-		jne	.endhandle3
-		call curr_clock
+
+		cmp al, 3					;3  simple_putchar , ebx= color_site,  cl = ch
+		jne	.endhandle4
+		push ebx
+		push ecx
+		call simple_putchar
+		add esp, 8
 		jmp .endsyscall
 	.endhandle3:
 
-		cmp al, 4					;4	clear screen()
+		cmp al, 4					;4  clock() return BCD code 0x00HourMinSec
+		jne	.endhandle4
+		call curr_clock
+		jmp .endsyscall
+	.endhandle4:
+
+		cmp al, 5					;5	clear screen()
 		jne	.endsyscall
 
 		call clear_screen
 
 	.endsyscall:
+		push eax
+		mov ax , [esp+4]
+		mov ds , ax
+		pop eax
+		add esp, 4
 		iretd
 
 rtm_0x70_interrupt_handle:
+		sti
+		cli									;只是为了方便设断点
+		push ds
+		push eax
+		mov ax , flat_4gb_data_seg_sel
+		mov ds , ax
+		pop eax
+
 		pushad
 		mov al,0x20                        ;中断结束命令EOI
 		out 0xa0,al                        ;向8259A从片发送
@@ -365,10 +415,17 @@ rtm_0x70_interrupt_handle:
 										;此处不考虑闹钟和周期性中断的情况
 		call c_rtm_0x70_interrupt_handle
 											; C语言完成任务切换， 并返回下一个任务TCB指针
-		
-		mov ebx, eax
-		jmp far [ebx+0x10]					; u32 TSS_bas ; u16 TSS_sel
+		cmp eax, 0xffffffff
+		je .noxchg
+		jmp far  [eax+0x14]				; u32 TSS_bas ; u16 TSS_sel
+	.noxchg:
 		popad
+
+		push eax
+		mov ax , [esp+4]
+		mov ds , ax
+		pop eax
+		add esp, 4
 		iretd
 
 keyboard_interrupt_handle:
@@ -588,8 +645,5 @@ Clean_partial_PDE:						;清空当前页目录的前半部分
 ;-------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------
-[section .data]
+	;.rel.text .data .bss .rodata
 	core_buf	times 512 db 0		;内核用的缓冲区
-
-	progend_sgn db 'this is the end of program'
-	prog_end:

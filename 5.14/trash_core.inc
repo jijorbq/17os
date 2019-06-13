@@ -9,20 +9,36 @@ simple_puts:
        mov ax  , bx
        shr ebx , 15         ; shr 16  ,, shl 1
 
-       mov ebp , [esp+0x24]  ; from 40
+       mov esi , [esp+0x24]  ; from 40
        .enumchar:
-              mov cl,[ebp]
+              mov cl,[esi]
               cmp cl, 0x0   ; 字符串默认以0结尾，
               je .endenum
               mov [VideoSite+ebx], cl
               inc ebx
               mov [VideoSite+ebx], al
               inc ebx
-              inc ebp
+              inc esi
               jmp .enumchar
        .endenum:
        popad
        ret
+global simple_putchar
+simple_putchar:             ; simple_puts(char ch , color_and_site)
+		pushad
+
+		mov ebx, [esp+0x28]
+		xor eax, eax
+		mov ax, bx
+		shr ebx , 15
+		mov ecx, [esp+0x24]
+		mov [VideoSite+ebx], cl
+		inc ebx
+		mov [VideoSite+ebx], al
+
+		popad
+		ret
+
 Out:
                             ;Out(port, val)
        push eax
@@ -44,19 +60,23 @@ In:
 
 roll_screen:
 		pushad
-
+              push es
+              mov ax, ds
+              mov es, ax
 		cld
 		mov esi, VideoSite+0xa0
 		mov edi, VideoSite
-		mov ecx, 1920
+		mov ecx, 1840
 		rep movsd
-		mov bx, 3840
+		mov bx, 3680
 		mov ecx, 80
 	.cls:
 		mov word [VideoSite+ebx], 0x0720
 		add bx, 2
 		loop .cls
 		
+              pop eax                            ;not pop ax, because the esp only +=2
+              mov es, ax
 		popad
 		ret
 clear_screen:

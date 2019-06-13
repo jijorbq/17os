@@ -6,18 +6,19 @@ typedef unsigned long long u64;
 #include "keymp.h"
 #define AVAILTCB 10
 #define tss_linear_address 0x80010000
+
+static u32 cnttcb=0,TSS_array;
+
 struct TCB{
 	struct TCB *pre;		// linked list 
-	u32 next_bas;
-	u32 LDT_bas;u16 LDT_sel;u16 LDT_lim;
-	u32 TSS_bas;u16 TSS_sel;u16 TSS_lim;
-	u16 state;
+	u32 next_bas;u16 state,LDT_lim;
+	u32 LDT_bas;u16 LDT_sel,TSS_lim;
+	u32 TSS_bas;u16 TSS_sel;
 	// u32 Stack0_4kblen,Stack0_bas; u16 Stack0_sel; u32 Stack0_initesp;
 	// u32 Stack1_4kblen,Stack1_bas; u16 Stack1_sel; u32 Stack1_initesp;
 	// u32 Stack2_4kblen,Stack2_bas; u16 Stack2_sel; u32 Stack2_initesp;
 	// u16	head_sel;
 }tottcb[AVAILTCB], *TCBHeader=0;
-u32 cnttcb=0,TSS_array=tss_linear_address;
 
 struct TSS{
 	struct TSS *preTSS;
@@ -29,6 +30,7 @@ struct TSS{
 };
 
 extern void simple_puts(u8 *s, u32 color_site);
+extern void simple_putchar(u8 ch, u32 color_site);
 extern void cmain();
 extern void roll_screen();
 extern void Out(u16, u8);
@@ -39,6 +41,7 @@ extern u8 getchar();
 extern u32 curr_clock();
 extern u32 allocate_a_4k_page();
 extern u32 getCR3();
+extern u32 getEFLAGS();
 extern void alloc_inst_a_page(u32 addr);
 extern u16 AddDescri_2_gdt(u32 bas,u32 lim ,u32 attr);
 extern u16 AddDescri_2_ldt(u32 bas,u32 lim ,u32 attr, struct TCB *t);
@@ -49,6 +52,8 @@ extern void Clean_partial_PDE();
 
 
 char buf[BUFLEN+1],c_buf[1025];
+
+//
 // StructTest a= (StructTest){1,2,3}, b=(StructTest){4,5,6};
 // StructTest StructFunc(StructTest x, StructTest y){
 // 	return (StructTest){x.a-y.a, x.b>y.b ? x.b: y.b , x.c*y.c};
@@ -80,17 +85,17 @@ void putchar(u8 c){
 	pos|= In(0x3d5);
 	if ( c==0x0d) pos=(pos/80+1)*80;else	//判断换行和回车
 	if (c==0x0a)pos+=80;else{
-		buf[0] = c; buf[1]=0;
-		simple_puts(buf, (pos<<16)+0x7);	//其他可视字符，直接在该位置打印
+		simple_putchar(c, (pos<<16)+0x7);	//其他可视字符，直接在该位置打印
 		++pos;
 	}
-	while ( pos>=25*80)roll_screen(), pos-=80;	//处理光标越位而滚屏的操作
+	while ( pos>=24*80)roll_screen(), pos-=80;	//处理光标越位而滚屏的操作
 	Out(0x3d4, 0x0e);
 	Out(0x3d5, pos>>8);						//将新的坐标位置写回端口
 	Out(0x3d4, 0x0f);
 	Out(0x3d5, pos&255);
 	return ;
 }
+void puts(u8 *s){for (; *s; ++s) putchar(*s);}
 void putnum(u32 num){
 	int len=0;u8 *_buf=buf+10;
 	for (;num; num/=10) _buf[len++] = num%10+'0';
@@ -156,12 +161,13 @@ extern u32 c_rtm_0x70_interrupt_handle(){
 	curcyc&=3;
 	simple_puts(buf, (24*80+79<<16) + 4);
 	show_current_clock();
+	if ( TCBHeader->pre ==0)return -1;
 	struct TCB *curact=TCBHeader;
 	while ( curact->pre) curact= curact->pre;
 	curact->state=0;
 	curact->pre=TCBHeader;TCBHeader=TCBHeader->pre;
 	curact=curact->pre;
-	curact->pre=0;curact->state=0xffff;
+	curact->pre=0;curact->state=0xffFF;
 	return curact;
 }
 //------------------------------------------------------------------
@@ -189,12 +195,14 @@ void append_to_tcb_link(struct TCB *t){
 }
 
 extern u16 Load_coreself(){			//返回TSS选择子
+	TSS_array=tss_linear_address;
 	struct TCB *t= &tottcb[cnttcb++];
 	t->pre=0; t->state= 0xffff;t->next_bas=0x80100000;
 	t->LDT_lim=0xffff;
 	struct TSS *tssp=t->TSS_bas=TSS_array;
 	t->TSS_lim= 103;
-	alloc_inst_a_page(t->TSS_bas);TSS_array+=0x1000;
+	// alloc_inst_a_page(t->TSS_bas);
+	TSS_array+=0x1000;
 	tssp->preTSS=0x0;tssp->CR3=getCR3();
 	tssp->LDTsel=tssp->T=0;tssp->IOmap=103;
 
@@ -231,31 +239,31 @@ extern void Load_program(int sectors){
 	)|0x3;// 建立数据段描述符并放入ldt中，返回段选择子。特权级设为3 , 长度27页
 
 	//将数据段作为用户任务的3特权级固有堆栈
-	tssp->SS=tssp->DS;tssp->ESP=prog_addr;
+	tssp->SS=tssp->DS;tssp->ESP=0x1b*0x1000;					//能不能不减4？
 	
 	//在用户任务的局部地址空间内创建0特权级堆栈，长度1页
 	alloc_inst_a_page(prog_addr);
 	tssp->SS0=AddDescri_2_ldt(
-		prog_addr, 0x00000fff, 0x00409200,t
+		prog_addr, 0x00000fff, 0x00409200,t					
 	)|0x0; // ;设置选择子的特权级为0
 	prog_addr+=0x1000;
-	tssp->ESP0=prog_addr;
+	tssp->ESP0=0x00001000;							// bug, 真实地址==esp+ssbase!!!!!! esp0=0xfff!!!!而不是prog_addr
 
 	//在用户任务的局部地址空间内创建1特权级堆栈，长度1页
 	alloc_inst_a_page(prog_addr);
 	tssp->SS1=AddDescri_2_ldt(
-		prog_addr, 0x00000fff, 0x0040b200,t
+		prog_addr, 0x00000fff, 0x0040b200,t			// why ???????
 	)|0x1; // ;设置选择子的特权级为1
 	prog_addr+=0x1000;
-	tssp->ESP1=prog_addr;
+	tssp->ESP1=0x00001000;
 
 	//在用户任务的局部地址空间内创建2特权级堆栈，长度1页
 	alloc_inst_a_page(prog_addr);
 	tssp->SS2=AddDescri_2_ldt(
-		prog_addr, 0x00000fff, 0x0040d200,t
+		0x0, 0x00000fff, 0x0040d200,t
 	)|0x2; // ;设置选择子的特权级为2
 	prog_addr+=0x1000;
-	tssp->ESP2=prog_addr;
+	tssp->ESP2=0x00001000;
 
 	//;在GDT中登记LDT描述符,并填写到TCB，TSS中
 	t->LDT_sel=tssp->LDTsel=AddDescri_2_gdt(
@@ -270,17 +278,20 @@ extern void Load_program(int sectors){
 		t->TSS_bas, t->TSS_lim, 0x00408900
 	);
 	
-	//总共27页，全部分配完
-	for (;prog_addr<(0x1B<<12); prog_addr+=0x1000)
+	//总共27页，全部分配完	多分配一页？
+	for (;prog_addr<(0x1C<<12); prog_addr+=0x1000)
 		alloc_inst_a_page(prog_addr);
 	
 
 	alloc_inst_a_page(0xffffe000);//分配一个页作页目录,由于还没有切换页表，对新页表的操作还需要在内核页表中进行,反正页目录和页表的US位为0，也不需要在用户空间里
 	memcpy(0xffffe000,0xfffff000,0x1000);
 	tssp->CR3 = Phyaddr(0xffffe000);
+	tssp->EFLAG= getEFLAGS();
+	tssp->EIP= *((u32*)(0x4));
 //	*((*u32)(tssp->CR3+0x4*0x3ff)) =   prog_addr// 这一步不需要获取实际物理地址
-	prog_addr+=4096;t->next_bas=prog_addr;
+	t->next_bas=prog_addr;
 	t->state=0;
+	
 
 	append_to_tcb_link(t);
 	// alloc_inst_a_page(prog_addr);	//分配一个页作页表
@@ -293,7 +304,7 @@ extern void Load_program(int sectors){
 // paging func
 #define page_map_len 64
 u8 page_bit_map[page_map_len]=
-				{0xff,0xff,0xff,0xff,0xff,0xff,0x55,0x55,
+				{0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,			//低端都是土狼驻地地方
            	    0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
             	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
             	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -313,5 +324,3 @@ u32 allocate_a_4k_page(){
 	return -1;
 }
 
-
-//

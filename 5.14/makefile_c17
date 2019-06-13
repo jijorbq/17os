@@ -1,0 +1,6 @@
+all:
+	nasm -f c17-1.asm -o user0.bin
+	nasm -f c17-2.asm -o user1.bin
+	nasm -f c17_mbr.asm -o mbr.bin
+	nasm -f c17_core.asm -o core.bin
+

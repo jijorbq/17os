@@ -1,0 +1,81 @@
+
+rtm_0x70_interrupt_handle b 0x402be
+call c_rtm_0x70_interrupt_handle 0x40b1e	ret 0x40b9d
+ 
+
+read_hard_1 0x40467
+alloc_ 0x404b1
+// user0
+TCB *t = 0x800419fc
+		 0x80041a18
+pre==0x800419C0	next_base=0x0001c000
+LDT bas=0x0000A000 ,sel=0x0020 , lim=0x0027
+TSS bas=0x80011000 ,sel=0x0028 , lim=0x0067
+state=0x0000
+
+TSS user0
+struct TSS{
+	struct TSS *preTSS=0;
+	u32 ESP0=0xc000, SS0=0x14, ESP1=0xd000, SS1=0x1d, ESP2=0x0xe000, SS2=0x26;
+	u32 CR3, EIP,EFLAG;
+	u32 EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI;
+	u32 ES, CS, SS, DS,FS, GS, LDTsel;
+	u16 T, IOmap;
+};
+
+0x40b71
+0x40b76
+
+
+loop :
+	0x40c9b
+	
+loop end:
+0x40cbb
+
+rolll_screen: 0x405b3
+
+tssp->ESP= ? 0x40bab 7th call
+ldt
+
+00C0F800 00000009 : cs
+00C0F200 0000001A : ds, ss
+00409200 B0000FFF : ss0
+
+//user0
+
+cr3 0x11d000 PTE0 0x100000
+
+// user1
+
+cr3 0x15b000 PTE0 0x13d000
+
+int 0x11 Phy addr 0x11b014
+then call simple_puts 0x405c3
+
+
+// user delay
+lb 0x19 0x45
+------------------------------------------------
+
+
+
+
+watch c17 core.
+
+
+_start : 0x40d9f
+
+
+ltr cx : 0x40fb1
+
+
+tcb : 0x80101000, 0x80103000
+tss : 0x80102000, 0x80104000
+
+ldt sel: 0x80008040
+
+user1 ldt
+00CFF800 0000FFFF	:cs
+00CFF200 0000FFFF :ds ss
+00CF9200 0000FFFF : ss0
