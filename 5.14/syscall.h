@@ -60,20 +60,20 @@ void c_snakewind(u32 BaseX, u32 BaseY, u32 Limx, u32 Limy){
 
 #define SNAKELEN 20
 const int vdx[4]={0,1,0,-1}, vdy[4]={1,0,-1,0};
-void c_snakerand(u32 BaseX, u32 BaseY, u32 color){
-	randseed=clock()|1;
+void c_snakerand(u32 BaseX, u32 BaseY,  u32 Limx, u32 Limy,const u8 *info, u32 color){
+	randseed=(clock()+info[0]+info[1])|1;
 	u8 x[SNAKELEN+1], y[SNAKELEN+1];
-	for (int i=1; i<=SNAKELEN; ++i)x[i]=BaseX, y[i]=BaseY+i;
+	for (int i=1; i<=SNAKELEN; ++i)x[i]=(i-1)/Limy, y[i]=(i-1)%Limy;
 	for (int i=SNAKELEN;i; --i)
-		simple_putchar('o', (x[i]*80+y[i]<<16)+color);
+		simple_putchar(info[i-1], ((x[i]+BaseX)*80+y[i]+BaseY<<16)+color);
 	for (u8 cnt=0,d=rand()%4;;++cnt){
 		if ( cnt%6==0) d=rand()%4;
-		for(x[0]=x[1]+vdx[d], y[0]= y[1]+vdy[d]; x[0]>=25 || y[0]>=80; x[0]=x[1]+vdx[d], y[0]= y[1]+vdy[d])
+		for(x[0]=x[1]+vdx[d], y[0]= y[1]+vdy[d]; x[0]>=Limx || y[0]>=Limy; x[0]=x[1]+vdx[d], y[0]= y[1]+vdy[d])
 			d=(d+1)%4;
-		simple_putchar(' ',(x[SNAKELEN]*80+y[SNAKELEN]<<16));
+		simple_putchar(' ',((x[SNAKELEN]+BaseX)*80+BaseY+y[SNAKELEN]<<16));
 		for (int i=SNAKELEN;i; --i){
 			x[i]=x[i-1]; y[i]=y[i-1];
-			simple_putchar('~', (x[i]*80+y[i]<<16)+color);
+			simple_putchar(info[i-1], ((x[i]+BaseX)*80+y[i]+BaseY<<16)+color);
 		}
 		Delay(DelayTime/3);
 	}

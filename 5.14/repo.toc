@@ -1,0 +1,17 @@
+\contentsline {section}{\numberline {一、\nobreakspace {}}实验要求}{2}
+\contentsline {section}{\numberline {二、\nobreakspace {}}实验配置}{2}
+\contentsline {subsection}{\numberline {（一）}实验支撑环境}{2}
+\contentsline {section}{\numberline {三、\nobreakspace {}}局部程序数据结构设计}{2}
+\contentsline {subsection}{\numberline {（一）}局部段描述符}{2}
+\contentsline {subsection}{\numberline {（二）}TSS}{2}
+\contentsline {subsection}{\numberline {（三）}TCB}{4}
+\contentsline {subsection}{\numberline {（四）}为高特权级使用的栈}{5}
+\contentsline {section}{\numberline {四、\nobreakspace {}}实验代码设计}{5}
+\contentsline {subsection}{\numberline {（一）}内存管理}{5}
+\contentsline {subsection}{\numberline {（二）}加载用户程序}{8}
+\contentsline {subsection}{\numberline {（三）}安装系统调用中断}{18}
+\contentsline {subsection}{\numberline {（四）}扩展系统调用}{22}
+\contentsline {subsection}{\numberline {（五）}时钟中断控制任务切换}{26}
+\contentsline {subsection}{\numberline {（六）}四个用户程序实现}{29}
+\contentsline {section}{\numberline {五、\nobreakspace {}}实验结果及分析}{31}
+\contentsline {section}{\numberline {六、\nobreakspace {}}实验总结}{33}

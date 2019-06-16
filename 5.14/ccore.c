@@ -195,7 +195,7 @@ void append_to_tcb_link(struct TCB *t){
 }
 
 extern u16 Load_coreself(){			//返回TSS选择子
-	TSS_array=tss_linear_address;
+	TSS_array=tss_linear_address;  //所有的TSS空间都在内核的空间进行分配。
 	struct TCB *t= &tottcb[cnttcb++];
 	t->pre=0; t->state= 0xffff;t->next_bas=0x80100000;
 	t->LDT_lim=0xffff;
@@ -203,17 +203,17 @@ extern u16 Load_coreself(){			//返回TSS选择子
 	t->TSS_lim= 103;
 	// alloc_inst_a_page(t->TSS_bas);
 	TSS_array+=0x1000;
-	tssp->preTSS=0x0;tssp->CR3=getCR3();
+	tssp->preTSS=0x0;tssp->CR3=getCR3();			//填入cr3
 	tssp->LDTsel=tssp->T=0;tssp->IOmap=103;
 
 	t->TSS_sel=AddDescri_2_gdt(
-		t->TSS_bas, t->TSS_lim, 0x00408900
+		t->TSS_bas, t->TSS_lim, 0x00408900			//制作TSS的描述符，指向TSS所在空间并安装到GDT中。
 	);
 	append_to_tcb_link(t);
 	return t->TSS_sel;
 }
 extern void Load_program(int sectors){
-	Clean_partial_PDE();
+	Clean_partial_PDE();							//清理前2GB的页目录
 	read_hard_disk_1(sectors,c_buf);
 	u32 siz = *((u32*)c_buf); 
 	u32 totsec=((siz+0x0fff)>>12)<<3;
